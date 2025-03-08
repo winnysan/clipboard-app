@@ -1,13 +1,14 @@
 import SwiftUI
 import Cocoa
 
-/// Hlavna aplikacia
+/// Hlavná aplikácia,
 @main
 struct ClipboardApp: App {
-    // Registracia AppDelegate
+    /// Registrácia `AppDelegate`
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
-    
+
     var body: some Scene {
-        Settings { EmptyView() } // Prazdne nastavenia, aby aplikácia bežala
+        /// Aplikácia beží na pozadí bez GUI
+        Settings { EmptyView() }
     }
 }
