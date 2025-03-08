@@ -50,8 +50,10 @@ class ClipboardManager: ObservableObject {
                     self.clipboardHistory.removeLast()
                 }
 
-                // Otvorí okno aplikácie po skopírovaní textu
-                WindowManager.shared.openWindow()
+                // Ak je povolené "Otvoriť okno pri kopírovaní", zobrazíme ho
+                if StatusBarManager.shared.openWindowOnCopy {
+                    WindowManager.shared.openWindow()
+                }
             } else {
                 print("⚠️ Nepodarilo sa získať text.")
             }

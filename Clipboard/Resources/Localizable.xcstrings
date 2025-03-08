@@ -2,6 +2,7 @@
   "sourceLanguage" : "en",
   "strings" : {
     "allow" : {
+      "comment" : "Tlačidlo na povolenie",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -19,6 +20,7 @@
       }
     },
     "cancel" : {
+      "comment" : "Tlačidlo na zrušenie",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -36,6 +38,7 @@
       }
     },
     "clipboard_app_title" : {
+      "comment" : "Nadpis aplikácie",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -53,6 +56,7 @@
       }
     },
     "launch_prompt_message" : {
+      "comment" : "Text pre povolenie automatického spustenia",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -70,6 +74,7 @@
       }
     },
     "launch_prompt_title" : {
+      "comment" : "Názov dialógu pre automatické spustenie",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -86,7 +91,25 @@
         }
       }
     },
+    "open_window_on_copy" : {
+      "comment" : "Otvoriť okno pri kopírovaní",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open window on copy"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otvoriť okno pri kopírovaní"
+          }
+        }
+      }
+    },
     "quit" : {
+      "comment" : "Tlačidlo na ukončenie aplikácie",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -104,6 +127,7 @@
       }
     },
     "start_at_login" : {
+      "comment" : "Tlačidlo na povolenie spustenia aplikácie pri prihlasení",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {

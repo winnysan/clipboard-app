@@ -9,6 +9,18 @@ class StatusBarManager {
     /// Referencia na položku stavovej lišty.
     private var statusItem: NSStatusItem?
 
+    /// Ukladanie preferencií používateľa
+    private let defaults = UserDefaults.standard
+
+    /// Kľúč pre nastavenie "Otvoriť okno pri kopírovaní"
+    private let openWindowOnCopyKey = "openWindowOnCopy"
+
+    /// Hodnota pre "Otvoriť okno pri kopírovaní"
+    var openWindowOnCopy: Bool {
+        get { defaults.bool(forKey: openWindowOnCopyKey) }
+        set { defaults.set(newValue, forKey: openWindowOnCopyKey) }
+    }
+
     /// Privátny inicializátor zabraňujúci vytvoreniu ďalších inštancií.
     private init() {}
 
@@ -39,6 +51,15 @@ class StatusBarManager {
     private func showContextMenu() {
         let menu = NSMenu()
 
+        // Položka "Otvoriť okno pri kopírovaní"
+        let openWindowItem = NSMenuItem(
+            title: NSLocalizedString("open_window_on_copy", comment: "Otvoriť okno pri kopírovaní"),
+            action: #selector(toggleOpenWindowOnCopy),
+            keyEquivalent: ""
+        )
+        openWindowItem.target = self
+        openWindowItem.state = openWindowOnCopy ? .on : .off
+
         // Položka "Spustiť pri štarte"
         let launchAtStartupItem = NSMenuItem(
             title: NSLocalizedString("start_at_login", comment: "Tlačidlo na povolenie spustenia aplikácie pri prihlasení"),
@@ -48,6 +69,7 @@ class StatusBarManager {
         launchAtStartupItem.target = self
         launchAtStartupItem.state = LaunchManager.shared.isLaunchAtStartupEnabled() ? .on : .off
 
+        menu.addItem(openWindowItem)
         menu.addItem(launchAtStartupItem)
         menu.addItem(.separator()) // Oddelovač
 
@@ -63,6 +85,11 @@ class StatusBarManager {
         statusItem?.menu = menu
         statusItem?.button?.performClick(nil) // Simuluje kliknutie na ikonu pre zobrazenie menu
         statusItem?.menu = nil // Po kliknutí na položku menu resetuje menu, aby neboli vizuálne chyby
+    }
+
+    /// Prepne stav "Otvoriť okno pri kopírovaní"
+    @objc private func toggleOpenWindowOnCopy() {
+        openWindowOnCopy.toggle()
     }
     
     /// Prepne stav automatického spúšťania aplikácie pri štarte systému.

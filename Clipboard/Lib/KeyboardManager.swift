@@ -1,7 +1,7 @@
 import Cocoa
 
 /// Trieda zodpovedná za sledovanie klávesových skratiek v systéme.
-/// Aktuálne sleduje `Control + C` a pri jeho stlačení volá `ClipboardManager`.
+/// Aktuálne sleduje `Control + C`, `Control + V` a `Option + V`.
 class KeyboardManager {
     /// Mach port na zachytávanie globálnych klávesových vstupov
     private var eventTap: CFMachPort?
@@ -29,6 +29,18 @@ class KeyboardManager {
             if flags.contains(.maskControl) && keyCode == 8 { // 8 = C
                 print("📝 Stlačené: Control + C")
                 ClipboardManager.shared.copySelectedText()
+                return nil // Zablokuje pôvodnú akciu
+            }
+            
+            // Kontrola, či bolo stlačené Control + V
+            if flags.contains(.maskControl) && keyCode == 9 { // 9 = V
+                print("📋 Stlačené: Control + V")
+                return nil // Zablokuje pôvodnú akciu
+            }
+
+            // Kontrola, či bolo stlačené Option + V
+            if flags.contains(.maskAlternate) && keyCode == 9 { // 9 = V
+                print("📜 Stlačené: Option + V")
                 return nil // Zablokuje pôvodnú akciu
             }
 
