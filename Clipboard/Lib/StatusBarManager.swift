@@ -41,7 +41,7 @@ class StatusBarManager {
 
         // Položka "Spustiť pri štarte"
         let launchAtStartupItem = NSMenuItem(
-            title: "Spustiť pri štarte",
+            title: NSLocalizedString("start_at_login", comment: "Tlačidlo na povolenie spustenia aplikácie pri prihlasení"),
             action: #selector(toggleLaunchAtStartup),
             keyEquivalent: ""
         )
@@ -53,7 +53,7 @@ class StatusBarManager {
 
         // Položka "Ukončiť aplikáciu"
         let quitItem = NSMenuItem(
-            title: "Ukončiť aplikáciu",
+            title: NSLocalizedString("quit", comment: "Tlačidlo na ukončenie aplikácie"),
             action: #selector(quitApp),
             keyEquivalent: ""
         )

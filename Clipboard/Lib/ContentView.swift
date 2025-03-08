@@ -11,7 +11,7 @@ struct ContentView: View {
 
     var body: some View {
         VStack {
-            Text("Clipboard App") // Upravený nadpis
+            Text(LocalizedStringResource("clipboard_app_title"))
                 .font(.headline)
                 .padding()
 

@@ -41,11 +41,11 @@ class LaunchManager {
         if !isLaunchAtStartupEnabled() {
             DispatchQueue.main.async {
                 let alert = NSAlert()
-                alert.messageText = "Povoliť automatické spustenie?"
-                alert.informativeText = "Chcete, aby sa aplikácia spustila automaticky pri štarte systému?"
+                alert.messageText = NSLocalizedString("launch_prompt_title", comment: "Názov dialógu pre automatické spustenie")
+                alert.informativeText = NSLocalizedString("launch_prompt_message", comment: "Text pre povolenie automatického spustenia")
                 alert.alertStyle = .informational
-                alert.addButton(withTitle: "Povoliť")
-                alert.addButton(withTitle: "Zrušiť")
+                alert.addButton(withTitle: NSLocalizedString("allow", comment: "Tlačidlo na povolenie"))
+                alert.addButton(withTitle: NSLocalizedString("cancel", comment: "Tlačidlo na zrušenie"))
 
                 let response = alert.runModal()
                 if response == .alertFirstButtonReturn {
