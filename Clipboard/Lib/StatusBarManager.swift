@@ -9,7 +9,7 @@ class StatusBarManager {
     /// Referencia na položku stavovej lišty.
     private var statusItem: NSStatusItem?
 
-    /// Privátny inicializátor zabraňujúci vytvoreniu ďalších instancií.
+    /// Privátny inicializátor zabraňujúci vytvoreniu ďalších inštancií.
     private init() {}
 
     /// Inicializuje ikonku v stavovej lište a nastaví akcie.
@@ -39,14 +39,36 @@ class StatusBarManager {
     private func showContextMenu() {
         let menu = NSMenu()
 
-        let quitItem = NSMenuItem(title: "Ukončiť aplikáciu", action: #selector(quitApp), keyEquivalent: "")
-        quitItem.target = self
+        // Položka "Spustiť pri štarte"
+        let launchAtStartupItem = NSMenuItem(
+            title: "Spustiť pri štarte",
+            action: #selector(toggleLaunchAtStartup),
+            keyEquivalent: ""
+        )
+        launchAtStartupItem.target = self
+        launchAtStartupItem.state = LaunchManager.shared.isLaunchAtStartupEnabled() ? .on : .off
 
+        menu.addItem(launchAtStartupItem)
+        menu.addItem(.separator()) // Oddelovač
+
+        // Položka "Ukončiť aplikáciu"
+        let quitItem = NSMenuItem(
+            title: "Ukončiť aplikáciu",
+            action: #selector(quitApp),
+            keyEquivalent: ""
+        )
+        quitItem.target = self
         menu.addItem(quitItem)
         
         statusItem?.menu = menu
         statusItem?.button?.performClick(nil) // Simuluje kliknutie na ikonu pre zobrazenie menu
         statusItem?.menu = nil // Po kliknutí na položku menu resetuje menu, aby neboli vizuálne chyby
+    }
+    
+    /// Prepne stav automatického spúšťania aplikácie pri štarte systému.
+    @objc private func toggleLaunchAtStartup() {
+        let isEnabled = LaunchManager.shared.isLaunchAtStartupEnabled()
+        LaunchManager.shared.setLaunchAtStartup(!isEnabled)
     }
     
     /// Ukončí aplikáciu.

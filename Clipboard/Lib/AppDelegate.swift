@@ -21,6 +21,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         print("✅ Aplikácia spustená na pozadí.")
 
+        // Automaticky požiada používateľa o povolenie spustenia pri štarte, ak nie je nastavené.
+        LaunchManager.shared.requestLaunchAtStartup()
+
         // Požiadavka na oprávnenia pre Accessibility API
         systemPermissionManager.requestAccessibilityPermission()
 
