@@ -25,7 +25,7 @@ class KeyboardManager {
             let keyCode = event.getIntegerValueField(.keyboardEventKeycode)
             let flags = event.flags
 
-            // Kontrola, či bolo stlačené Control + C
+            // Kontrola, či bolo stlačené Control + C, skopíruje označený text
             if flags.contains(.maskControl) && keyCode == 8 { // 8 = C
                 print("📝 Stlačené: Control + C")
                 ClipboardManager.shared.copySelectedText()
@@ -35,12 +35,14 @@ class KeyboardManager {
             // Kontrola, či bolo stlačené Control + V
             if flags.contains(.maskControl) && keyCode == 9 { // 9 = V
                 print("📋 Stlačené: Control + V")
+                ClipboardManager.shared.pasteLatestText()
                 return nil // Zablokuje pôvodnú akciu
             }
 
-            // Kontrola, či bolo stlačené Option + V
+            // Kontrola, či bolo stlačené Option + V, otvorí/zatvorí okno
             if flags.contains(.maskAlternate) && keyCode == 9 { // 9 = V
                 print("📜 Stlačené: Option + V")
+                WindowManager.shared.toggleWindow()
                 return nil // Zablokuje pôvodnú akciu
             }
 

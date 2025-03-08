@@ -59,6 +59,35 @@ class ClipboardManager: ObservableObject {
             }
         }
     }
+    
+    /// Vloží posledný skopírovaný text z histórie na miesto kurzora.
+    func pasteLatestText() {
+        guard let latestText = clipboardHistory.first else {
+            print("⚠️ Nie je k dispozícii žiadny text na vloženie.")
+            return
+        }
+
+        let pasteboard = NSPasteboard.general
+        pasteboard.clearContents()
+        pasteboard.setString(latestText, forType: .string)
+
+        // Simulácia Cmd + V na vloženie textu
+        let source = CGEventSource(stateID: .hidSystemState)
+        let cmdDown = CGEvent(keyboardEventSource: source, virtualKey: 0x37, keyDown: true) // Command
+        let vDown = CGEvent(keyboardEventSource: source, virtualKey: 0x09, keyDown: true) // V
+        let vUp = CGEvent(keyboardEventSource: source, virtualKey: 0x09, keyDown: false)
+        let cmdUp = CGEvent(keyboardEventSource: source, virtualKey: 0x37, keyDown: false)
+
+        cmdDown?.flags = .maskCommand
+        vDown?.flags = .maskCommand
+
+        cmdDown?.post(tap: .cghidEventTap)
+        vDown?.post(tap: .cghidEventTap)
+        vUp?.post(tap: .cghidEventTap)
+        cmdUp?.post(tap: .cghidEventTap)
+
+        print("📋 Vložený text: \(latestText)")
+    }
 
     /// Vypíše vybraný text do konzoly.
     /// - Parameter text: Text, ktorý sa má vypísať.
