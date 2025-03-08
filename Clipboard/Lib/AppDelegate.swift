@@ -1,17 +1,21 @@
 import Cocoa
 
 /// Hlavný delegát aplikácie, ktorý inicializuje a spravuje jej životný cyklus.
-/// Zodpovedá za požiadanie oprávnení a spustenie sledovania klávesových skratiek.
+/// Zodpovedá za požiadanie oprávnení, spustenie sledovania klávesových skratiek
+/// a inicializáciu hlavného okna aplikácie (`WindowManager`).
 class AppDelegate: NSObject, NSApplicationDelegate {
-    /// Správca sledovania klávesových skratiek
+    /// Správca sledovania klávesových skratiek.
     private var keyboardManager: KeyboardManager?
 
-    /// Správca systémových oprávnení
+    /// Správca systémových oprávnení.
     private let systemPermissionManager = SystemPermissionManager()
 
     /// Volá sa pri spustení aplikácie a inicializuje potrebné služby.
     /// - Parameter aNotification: Systémová notifikácia pri štarte aplikácie.
     func applicationDidFinishLaunching(_ aNotification: Notification) {
+        // Inicializácia a konfigurácia hlavného okna aplikácie.
+        WindowManager.shared.configureWindow()
+        
         print("✅ Aplikácia spustená na pozadí.")
 
         // Požiadavka na oprávnenia pre Accessibility API

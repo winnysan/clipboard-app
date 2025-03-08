@@ -7,6 +7,7 @@ class ClipboardManager {
     static let shared = ClipboardManager()
 
     /// Skopíruje označený text zo systému a vypíše ho do konzoly.
+    /// Po skopírovaní textu automaticky zobrazí okno aplikácie.
     func copySelectedText() {
         let pasteboard = NSPasteboard.general
         pasteboard.clearContents() // Vymaže schránku pred kopírovaním
@@ -30,6 +31,9 @@ class ClipboardManager {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             if let copiedText = pasteboard.string(forType: .string), !copiedText.isEmpty {
                 print("📋 Skopírovaný text: \(copiedText)")
+                
+                // Otvorí okno aplikácie po skopírovaní textu
+                WindowManager.shared.openWindow()
             } else {
                 print("⚠️ Nepodarilo sa získať text.")
             }
