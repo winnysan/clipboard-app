@@ -6,9 +6,6 @@ class KeyboardManager {
     /// Mach port na zachytávanie globálnych klávesových vstupov
     private var eventTap: CFMachPort?
 
-    /// Správca schránky
-    private let clipboardManager = ClipboardManager()
-
     /// Inicializácia sledovania klávesových vstupov
     init() {
         setupEventTap()
