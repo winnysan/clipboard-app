@@ -60,16 +60,19 @@ class ClipboardManager: ObservableObject {
         }
     }
     
-    /// Vloží posledný skopírovaný text z histórie na miesto kurzora.
-    func pasteLatestText() {
-        guard let latestText = clipboardHistory.first else {
+    /// Vloží zadaný text alebo najnovší text z histórie na miesto kurzora.
+    /// - Parameter text: Voliteľný parameter. Ak nie je zadaný, použije sa posledný text z histórie.
+    func pasteText(_ text: String? = nil) {
+         let pasteboard = NSPasteboard.general
+ 
+         // Ak nie je zadaný text, použijeme posledný text z histórie.
+         guard let textToPaste = text ?? clipboardHistory.first else {
             print("⚠️ Nie je k dispozícii žiadny text na vloženie.")
             return
         }
 
-        let pasteboard = NSPasteboard.general
         pasteboard.clearContents()
-        pasteboard.setString(latestText, forType: .string)
+        pasteboard.setString(textToPaste, forType: .string)
 
         // Simulácia Cmd + V na vloženie textu
         let source = CGEventSource(stateID: .hidSystemState)
@@ -80,18 +83,18 @@ class ClipboardManager: ObservableObject {
 
         cmdDown?.flags = .maskCommand
         vDown?.flags = .maskCommand
+        
+        // Uchovanie pôvodného fokusu pred vložením textu.
+        WindowManager.shared.preserveFocusBeforeOpening()
 
         cmdDown?.post(tap: .cghidEventTap)
         vDown?.post(tap: .cghidEventTap)
         vUp?.post(tap: .cghidEventTap)
         cmdUp?.post(tap: .cghidEventTap)
+        
+        // Obnovenie pôvodného fokusu po vložení textu.
+        WindowManager.shared.restorePreviousFocus()
 
-        print("📋 Vložený text: \(latestText)")
-    }
-
-    /// Vypíše vybraný text do konzoly.
-    /// - Parameter text: Text, ktorý sa má vypísať.
-    func printSelectedText(_ text: String) {
-        print("📋 Vybraný text: \(text)")
+        print("📋 Vložený text: \(textToPaste)")
     }
 }

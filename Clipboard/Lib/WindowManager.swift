@@ -12,10 +12,16 @@ class WindowManager {
     /// Veľkosť okna aplikácie.
     private let windowSize = NSSize(width: 300, height: 400)
     
+    /// Predchádzajúca aktívna aplikácia (pre zachovanie fokusu).
+    private var previousApp: NSRunningApplication?
+    
+    /// Timer na sledovanie zmeny aktívnej aplikácie.
+    private var focusTrackingTimer: Timer?
+    
     /// Privátny inicializátor zabraňujúci vytvoreniu ďalších inštancií.
     private init() {}
-
-    /// Konfiguruje okno aplikácie.
+    
+    /// Konfiguruje hlavné okno aplikácie s vizuálnymi vlastnosťami a rozložením.
     func configureWindow() {
         let window = CustomWindow(
             contentRect: NSRect(origin: .zero, size: windowSize),
@@ -100,35 +106,75 @@ class WindowManager {
         window?.setFrame(NSRect(x: x, y: y, width: windowWidth, height: windowHeight), display: true)
     }
     
-    /// Zobrazí alebo skryje okno aplikácie.
+    /// Zobrazí alebo skryje okno aplikácie a spustí sledovanie fokusu.
     func toggleWindow() {
         guard let window = window else { return }
         
         if window.isVisible {
-            window.orderOut(nil) // Skryť okno
+            closeWindow()
         } else {
+            preserveFocusBeforeOpening()
             window.makeKeyAndOrderFront(nil) // Zobraziť okno
-            NSApp.activate(ignoringOtherApps: true) // Aktivovať aplikáciu
+            startFocusTracking() // Začať sledovanie aktívnej aplikácie
         }
     }
     
-    /// Otvorí okno aplikácie, ak ešte nie je viditeľné.
+    /// Otvorí okno aplikácie a spustí sledovanie fokusu.
     func openWindow() {
         guard let window = window, !window.isVisible else { return }
         
+        preserveFocusBeforeOpening()
         window.makeKeyAndOrderFront(nil) // Zobraziť okno
-        NSApp.activate(ignoringOtherApps: true) // Aktivovať aplikáciu
+        startFocusTracking()
     }
     
-    /// Zatvorí okno aplikácie.
+    /// Zatvorí okno aplikácie a zastaví sledovanie fokusu.
     func closeWindow() {
         guard let window = window else { return }
         window.orderOut(nil)
+        stopFocusTracking()
     }
     
     /// Handler pre stlačenie tlačidla na zatvorenie okna.
     @objc private func closeButtonClicked() {
         closeWindow()
     }
+    
+    /// Uloží aktuálnu aktívnu aplikáciu pred otvorením okna aplikácie.
+    func preserveFocusBeforeOpening() {
+        guard let currentApp = NSWorkspace.shared.frontmostApplication,
+              currentApp.bundleIdentifier != Bundle.main.bundleIdentifier else {
+            print("⚠️ Fokus nebol uložený, aktuálne sme už v aplikácii Clipboard.")
+            return
+        }
+        
+        previousApp = currentApp
+        print("🔹 Pôvodná aktívna aplikácia: \(previousApp?.localizedName ?? "Neznáma aplikácia")")
+    }
+    
+    /// Obnoví predchádzajúcu aplikáciu ako aktívnu.
+     func restorePreviousFocus() {
+         guard let app = previousApp else { return }
+         let success = app.activate(options: [.activateAllWindows])
+         print(success ? "✅ Fokus obnovený na: \(app.localizedName ?? "Neznáma aplikácia")" : "❌ Nepodarilo sa obnoviť fokus.")
+     }
+     
+     /// Spustí sledovanie aktuálnej aktívnej aplikácie na pozadí.
+     private func startFocusTracking() {
+         focusTrackingTimer?.invalidate() // Zruší predchádzajúci timer, ak existuje
+         
+         focusTrackingTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { _ in
+             guard let currentApp = NSWorkspace.shared.frontmostApplication else { return }
+             if currentApp.bundleIdentifier != Bundle.main.bundleIdentifier {
+                 self.previousApp = currentApp
+                 print("🔄 Aktualizovaný fokus na: \(currentApp.localizedName ?? "Neznáma aplikácia")")
+             }
+         }
+     }
+    
+    /// Zastaví sledovanie aktívnej aplikácie.
+     private func stopFocusTracking() {
+         focusTrackingTimer?.invalidate()
+         focusTrackingTimer = nil
+     }
 }
-
