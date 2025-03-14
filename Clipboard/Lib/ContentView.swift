@@ -22,7 +22,7 @@ struct ContentView: View {
                     VStack(spacing: 8) { // Menšie medzery medzi položkami
                         ForEach(clipboardManager.clipboardHistory, id: \.self) { text in
                             Button(action: {
-                                print("🟡 Kliknuté na text: \(text)")
+                                appLog("🟡 Kliknuté na text: \(text)", level: .info)
                                 clipboardManager.pasteText(text)
                             }) {
                                 HStack {

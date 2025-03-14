@@ -19,7 +19,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // Inicializácia stavovej lišty.
         StatusBarManager.shared.setupStatusBar()
         
-        print("✅ Aplikácia spustená na pozadí.")
+        appLog("✅ Aplikácia spustená na pozadí.", level: .info)
 
         // Automaticky požiada používateľa o povolenie spustenia pri štarte, ak nie je nastavené.
         LaunchManager.shared.requestLaunchAtStartup()
@@ -30,9 +30,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // Spustenie sledovania klávesov (iba ak máme oprávnenia)
         if systemPermissionManager.hasAccessibilityPermission() {
             keyboardManager = KeyboardManager()
-            print("⌨️ Sledovanie klávesových skratiek bolo spustené.")
+            appLog("⌨️ Sledovanie klávesových skratiek bolo spustené.", level: .info)
         } else {
-            print("⚠️ Klávesové skratky nebudú fungovať, kým neudelíte oprávnenie v Nastaveniach.")
+            appLog("⚠️ Klávesové skratky nebudú fungovať, kým neudelíte oprávnenie v Nastaveniach.", level: .warning)
         }
     }
 
@@ -40,6 +40,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     /// - Parameter aNotification: Systémová notifikácia pri ukončení aplikácie.
     func applicationWillTerminate(_ aNotification: Notification) {
         keyboardManager = nil
-        print("🚪 Aplikácia bola ukončená.")
+        appLog("🚪 Aplikácia bola ukončená.", level: .info)
     }
 }

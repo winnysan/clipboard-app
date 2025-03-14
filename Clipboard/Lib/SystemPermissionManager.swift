@@ -11,19 +11,19 @@ class SystemPermissionManager {
 
     /// Otvorí systémové nastavenia pre udelenie oprávnenia v **Privacy & Security > Accessibility**.
     func requestAccessibilityPermission() {
-        print("🔓 Kontrola oprávnenia na sledovanie klávesnice...")
+        appLog("🔓 Kontrola oprávnenia na sledovanie klávesnice...", level: .info)
 
         if hasAccessibilityPermission() {
-            print("✅ Aplikácia už má oprávnenie.")
+            appLog("✅ Aplikácia už má požadované oprávnenie.", level: .info)
             return
         }
 
-        print("⚠️ Aplikácia nemá oprávnenie. Otváram systémové nastavenia...")
+        appLog("⚠️ Aplikácia nemá oprávnenie. Otváram systémové nastavenia...", level: .warning)
 
         if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility") {
             NSWorkspace.shared.open(url)
         } else {
-            print("❌ Nepodarilo sa otvoriť systémové nastavenia.")
+            appLog("❌ Nepodarilo sa otvoriť systémové nastavenia. Skontrolujte oprávnenia manuálne.", level: .error)
         }
     }
 }

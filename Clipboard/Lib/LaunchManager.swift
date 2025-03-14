@@ -24,14 +24,16 @@ class LaunchManager {
         if enabled {
             do {
                 try SMAppService.mainApp.register()
+                appLog("✅ Automatické spustenie aplikácie bolo povolené.", level: .info)
             } catch {
-                print("❌ Chyba pri nastavovaní spustenia pri štarte: \(error.localizedDescription)")
+                appLog("❌ Chyba pri nastavovaní spustenia pri štarte: \(error.localizedDescription)", level: .error)
             }
         } else {
             do {
                 try SMAppService.mainApp.unregister()
+                appLog("✅ Automatické spustenie aplikácie bolo zakázané.", level: .info)
             } catch {
-                print("❌ Chyba pri odstraňovaní spustenia pri štarte: \(error.localizedDescription)")
+                appLog("❌ Chyba pri odstraňovaní spustenia pri štarte: \(error.localizedDescription)", level: .error)
             }
         }
     }
@@ -50,9 +52,9 @@ class LaunchManager {
                 let response = alert.runModal()
                 if response == .alertFirstButtonReturn {
                     self.setLaunchAtStartup(true)
-                    print("✅ Automatické spustenie povolené.")
+                    appLog("✅ Používateľ povolil automatické spustenie aplikácie.", level: .info)
                 } else {
-                    print("❌ Používateľ zamietol automatické spustenie.")
+                    appLog("❌ Používateľ zamietol automatické spustenie aplikácie.", level: .warning)
                 }
             }
         }

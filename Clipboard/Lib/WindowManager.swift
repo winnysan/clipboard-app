@@ -144,19 +144,19 @@ class WindowManager {
     func preserveFocusBeforeOpening() {
         guard let currentApp = NSWorkspace.shared.frontmostApplication,
               currentApp.bundleIdentifier != Bundle.main.bundleIdentifier else {
-            print("⚠️ Fokus nebol uložený, aktuálne sme už v aplikácii Clipboard.")
+            appLog("⚠️ Fokus nebol uložený, aktuálne sme už v aplikácii Clipboard.", level: .warning)
             return
         }
         
         previousApp = currentApp
-        print("🔹 Pôvodná aktívna aplikácia: \(previousApp?.localizedName ?? "Neznáma aplikácia")")
+        appLog("🔹 Pôvodná aktívna aplikácia: \(previousApp?.localizedName ?? "Neznáma aplikácia")", level: .info)
     }
     
     /// Obnoví predchádzajúcu aplikáciu ako aktívnu.
      func restorePreviousFocus() {
          guard let app = previousApp else { return }
          let success = app.activate(options: [.activateAllWindows])
-         print(success ? "✅ Fokus obnovený na: \(app.localizedName ?? "Neznáma aplikácia")" : "❌ Nepodarilo sa obnoviť fokus.")
+         appLog(success ? "✅ Fokus obnovený na: \(app.localizedName ?? "Neznáma aplikácia")" : "❌ Nepodarilo sa obnoviť fokus.", level: success ? .info : .error)
      }
      
      /// Spustí sledovanie aktuálnej aktívnej aplikácie na pozadí.
@@ -167,7 +167,7 @@ class WindowManager {
              guard let currentApp = NSWorkspace.shared.frontmostApplication else { return }
              if currentApp.bundleIdentifier != Bundle.main.bundleIdentifier {
                  self.previousApp = currentApp
-                 print("🔄 Aktualizovaný fokus na: \(currentApp.localizedName ?? "Neznáma aplikácia")")
+                 appLog("🔄 Aktualizovaný fokus na: \(currentApp.localizedName ?? "Neznáma aplikácia")", level: .debug)
              }
          }
      }

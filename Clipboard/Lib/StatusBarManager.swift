@@ -90,6 +90,7 @@ class StatusBarManager {
     /// Prepne stav "Otvoriť okno pri kopírovaní"
     @objc private func toggleOpenWindowOnCopy() {
         openWindowOnCopy.toggle()
+        appLog("🔄 Otvoriť okno pri kopírovaní: \(openWindowOnCopy ? "Zapnuté" : "Vypnuté")", level: .info)
     }
     
     /// Prepne stav automatického spúšťania aplikácie pri štarte systému.
@@ -100,6 +101,7 @@ class StatusBarManager {
     
     /// Ukončí aplikáciu.
     @objc private func quitApp() {
+        appLog("🚪 Aplikácia bola ukončená.", level: .info)
         NSApp.terminate(nil)
     }
 }

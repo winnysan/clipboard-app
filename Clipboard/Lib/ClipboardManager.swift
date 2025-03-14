@@ -39,7 +39,7 @@ class ClipboardManager: ObservableObject {
         // Po krátkom čase prečítame obsah schránky a uložíme ho do histórie
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             if let copiedText = pasteboard.string(forType: .string), !copiedText.isEmpty {
-                print("📋 Skopírovaný text: \(copiedText)")
+                appLog("📋 Skopírovaný text: \(copiedText)", level: .info)
 
                 // Odstránime predchádzajúci výskyt a pridáme nový na začiatok
                 self.clipboardHistory.removeAll { $0 == copiedText }
@@ -55,7 +55,7 @@ class ClipboardManager: ObservableObject {
                     WindowManager.shared.openWindow()
                 }
             } else {
-                print("⚠️ Nepodarilo sa získať text.")
+                appLog("⚠️ Nepodarilo sa získať text.", level: .warning)
             }
         }
     }
@@ -67,7 +67,7 @@ class ClipboardManager: ObservableObject {
  
          // Ak nie je zadaný text, použijeme posledný text z histórie.
          guard let textToPaste = text ?? clipboardHistory.first else {
-            print("⚠️ Nie je k dispozícii žiadny text na vloženie.")
+            appLog("⚠️ Nie je k dispozícii žiadny text na vloženie.", level: .warning)
             return
         }
 
@@ -95,6 +95,6 @@ class ClipboardManager: ObservableObject {
         // Obnovenie pôvodného fokusu po vložení textu.
         WindowManager.shared.restorePreviousFocus()
 
-        print("📋 Vložený text: \(textToPaste)")
+        appLog("📋 Vložený text: \(textToPaste)", level: .info)
     }
 }

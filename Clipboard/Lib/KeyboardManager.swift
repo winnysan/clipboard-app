@@ -27,21 +27,21 @@ class KeyboardManager {
 
             // Ak je stlačené Control + C, skopíruje označený text
             if flags.contains(.maskControl) && keyCode == 8 { // 8 = C
-                print("📝 Stlačené: Control + C")
+                appLog("📝 Stlačené: Control + C", level: .info)
                 ClipboardManager.shared.copySelectedText()
                 return nil // Zablokuje pôvodnú akciu
             }
             
             // Ak je stlačené Control + V, vloží posledný skopírovaný text
             if flags.contains(.maskControl) && keyCode == 9 { // 9 = V
-                print("📋 Stlačené: Control + V")
+                appLog("📋 Stlačené: Control + V", level: .info)
                 ClipboardManager.shared.pasteText()
                 return nil // Zablokuje pôvodnú akciu
             }
 
             // Ak je stlačené Option + V, otvorí alebo zatvorí okno aplikácie
             if flags.contains(.maskAlternate) && keyCode == 9 { // 9 = V
-                print("📜 Stlačené: Option + V")
+                appLog("📜 Stlačené: Option + V", level: .info)
                 WindowManager.shared.toggleWindow()
                 return nil // Zablokuje pôvodnú akciu
             }
@@ -55,12 +55,13 @@ class KeyboardManager {
             CFRunLoopAddSource(CFRunLoopGetCurrent(), runLoopSource, .commonModes)
             CGEvent.tapEnable(tap: eventTap, enable: true)
         } else {
-            print("❌ Nepodarilo sa vytvoriť Event Tap.")
+            appLog("❌ Nepodarilo sa vytvoriť Event Tap.", level: .error)
         }
     }
 
     /// Deštruktor - uvoľnenie Event Tap pri ukončení aplikácie
     deinit {
+        appLog("🔻 KeyboardManager deinicializovaný, Event Tap uvoľnený.", level: .debug)
         eventTap = nil
     }
 }

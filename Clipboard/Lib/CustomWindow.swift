@@ -16,6 +16,7 @@ class CustomWindow: NSWindow {
     /// - Parameter sender: Objekt, ktorý volá túto metódu.
     override func makeKeyAndOrderFront(_ sender: Any?) {
         // Umožní zobrazenie okna, ale neaktivuje ho ako hlavné
+        appLog("📂 Zobrazenie CustomWindow bez aktivácie fokusu", level: .debug)
         super.orderFront(sender)
     }
 }
