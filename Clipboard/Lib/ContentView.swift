@@ -21,9 +21,8 @@ struct ContentView: View {
                 ScrollView {
                     VStack(spacing: 8) { // Menšie medzery medzi položkami
                         ForEach(clipboardManager.clipboardHistory, id: \.self) { text in
-                            HStack {
+                            HStack(alignment: .top) {
                                 Button(action: {
-                                    appLog("🟡 Kliknuté na text: \(text)", level: .info)
                                     clipboardManager.pasteText(text)
                                 }) {
                                     HStack {
@@ -36,10 +35,6 @@ struct ContentView: View {
                                     }
                                     .background(hoveredItem == text ? Color.white.opacity(0.25) : Color.white.opacity(0.15)) // Efekt hoveru
                                     .cornerRadius(10)
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 10)
-                                            .stroke(Color.gray.opacity(0.3), lineWidth: 1) // Jemný okraj
-                                    )
                                     .contentShape(Rectangle()) // Klikateľná celá plocha
                                     .onHover { hovering in
                                         withAnimation(.easeInOut(duration: 0.15)) {
@@ -50,14 +45,25 @@ struct ContentView: View {
                                 .buttonStyle(.plain) // Odstránenie defaultného tlačidlového štýlu
                                 .id(text) // Unikátne ID pre skrolovanie
 
-                                /// Tlačidlo na pripnutie položky, aby zostala v histórii aj po reštarte.
-                                Button(action: {
-                                    clipboardManager.togglePin(text)
-                                }) {
-                                    Image(systemName: clipboardManager.pinnedItems.contains(text) ? "pin.fill" : "pin")
-                                        .padding(8)
+                                /// VStack na umiestnenie tlačidiel mimo záznamu vpravo
+                                VStack(alignment: .trailing, spacing: 4) {
+                                    /// Tlačidlo na pripnutie položky
+                                    Button(action: {
+                                        clipboardManager.togglePin(text)
+                                    }) {
+                                        Image(systemName: clipboardManager.pinnedItems.contains(text) ? "pin.fill" : "pin")
+                                    }
+                                    .buttonStyle(.borderless) // Odstránenie rámu tlačidla
+
+                                    /// Tlačidlo na odstránenie položky (Trash)
+                                    Button(action: {
+                                        clipboardManager.removeItem(text)
+                                    }) {
+                                        Image(systemName: "trash")
+                                    }
+                                    .buttonStyle(.borderless) // Odstránenie rámu tlačidla
                                 }
-                                .buttonStyle(.borderless) // Štýl tlačidla bez rámu
+                                .padding(.leading, 4) // Pridanie medzery pred VStack
                             }
                         }
                     }
@@ -77,4 +83,3 @@ struct ContentView: View {
         .frame(width: 300, height: 400)
     }
 }
-

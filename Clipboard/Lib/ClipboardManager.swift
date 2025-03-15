@@ -172,4 +172,11 @@ class ClipboardManager: ObservableObject {
         // Uložíme len pripnuté položky do JSON-u, ale `clipboardHistory` ostane nezmenené
         saveHistory()
     }
+    
+    /// Odstráni položku zo zoznamu aj z pripnutých
+    func removeItem(_ text: String) {
+        clipboardHistory.removeAll { $0 == text } // Odstráni z histórie
+        pinnedItems.remove(text) // Odstráni z pripnutých
+        saveHistory() // Uložíme len pripnuté položky
+    }
 }
