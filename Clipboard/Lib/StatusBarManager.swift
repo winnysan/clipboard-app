@@ -50,6 +50,14 @@ class StatusBarManager {
     /// Zobrazí kontextové menu pri kliknutí pravým tlačidlom na ikonku stavovej lišty.
     private func showContextMenu() {
         let menu = NSMenu()
+        
+        // Položka "O aplikácii"
+        let aboutItem = NSMenuItem(
+            title: NSLocalizedString("about_app", comment: "O aplikácii"),
+            action: #selector(showAboutWindow),
+            keyEquivalent: ""
+        )
+        aboutItem.target = self
 
         // Položka "Otvoriť okno pri kopírovaní"
         let openWindowItem = NSMenuItem(
@@ -69,6 +77,8 @@ class StatusBarManager {
         launchAtStartupItem.target = self
         launchAtStartupItem.state = LaunchManager.shared.isLaunchAtStartupEnabled() ? .on : .off
 
+        menu.addItem(aboutItem)
+        menu.addItem(.separator()) // Oddelovač
         menu.addItem(openWindowItem)
         menu.addItem(launchAtStartupItem)
         menu.addItem(.separator()) // Oddelovač
@@ -103,5 +113,18 @@ class StatusBarManager {
     @objc private func quitApp() {
         appLog("🚪 Aplikácia bola ukončená.", level: .info)
         NSApp.terminate(nil)
+    }
+    
+    /// Zobrazí okno "O aplikácii"
+    @objc private func showAboutWindow() {
+         let appVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "Unknown"
+         let informativeText = String(format: NSLocalizedString("informative_text", comment: "Informácie o aplikácii"), appVersion)
+         
+         let alert = NSAlert()
+         alert.messageText = NSLocalizedString("clipboard_app_title", comment: "Nadpis aplikácie")
+         alert.informativeText = informativeText
+         alert.alertStyle = .informational
+         alert.addButton(withTitle: "OK")
+         alert.runModal()
     }
 }

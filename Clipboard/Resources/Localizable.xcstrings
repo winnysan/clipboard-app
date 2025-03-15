@@ -1,6 +1,23 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "about_app" : {
+      "comment" : "O aplikácii",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "About Clipboard"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O Clipboard"
+          }
+        }
+      }
+    },
     "allow" : {
       "comment" : "Tlačidlo na povolenie",
       "extractionState" : "manual",
@@ -51,6 +68,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Schránka"
+          }
+        }
+      }
+    },
+    "informative_text" : {
+      "comment" : "Informácie o aplikácii",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Version %@\nA simple clipboard manager for macOS.\n© 2025 github.com/winnysan"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verzia %@\nJednoduchá aplikácia na správu schránky pre macOS.\n© 2025 github.com/winnysan"
           }
         }
       }
