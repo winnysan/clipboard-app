@@ -72,6 +72,23 @@
         }
       }
     },
+    "close_window_on_paste" : {
+      "comment" : "Zatvoriť okno pri vložení",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Close window on paste"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zatvoriť okno pri vložení"
+          }
+        }
+      }
+    },
     "informative_text" : {
       "comment" : "Informácie o aplikácii",
       "localizations" : {

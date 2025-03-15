@@ -14,11 +14,29 @@ class StatusBarManager {
 
     /// Kľúč pre nastavenie "Otvoriť okno pri kopírovaní"
     private let openWindowOnCopyKey = "openWindowOnCopy"
+    
+    /// Kľúč pre nastavenie "Zatvoriť okno pri vložení".
+    private let closeWindowOnPasteKey = "closeWindowOnPaste"
 
     /// Hodnota pre "Otvoriť okno pri kopírovaní"
     var openWindowOnCopy: Bool {
         get { defaults.bool(forKey: openWindowOnCopyKey) }
         set { defaults.set(newValue, forKey: openWindowOnCopyKey) }
+    }
+    
+    /// Hodnota pre "Zatvoriť okno pri vložení".
+    var closeWindowOnPaste: Bool {
+        get { defaults.bool(forKey: closeWindowOnPasteKey) }
+        set { defaults.set(newValue, forKey: closeWindowOnPasteKey) }
+    }
+     
+    /// Registrovanie predvolených hodnôt pri prvom spustení aplikácie.
+    func registerDefaultPreferences() {
+        let defaultValues: [String: Any] = [
+            openWindowOnCopyKey: false,  // Predvolene vypnuté
+            closeWindowOnPasteKey: true // Predvolene zapnuté
+        ]
+        defaults.register(defaults: defaultValues)
     }
 
     /// Privátny inicializátor zabraňujúci vytvoreniu ďalších inštancií.
@@ -26,6 +44,8 @@ class StatusBarManager {
 
     /// Inicializuje ikonku v stavovej lište a nastaví akcie.
     func setupStatusBar() {
+        registerDefaultPreferences() // Zavolanie metódy na registráciu predvolených hodnôt
+        
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         
         if let button = statusItem?.button {
@@ -67,6 +87,15 @@ class StatusBarManager {
         )
         openWindowItem.target = self
         openWindowItem.state = openWindowOnCopy ? .on : .off
+        
+        // Položka "Zatvoriť okno pri vložení"
+        let closeWindowItem = NSMenuItem(
+            title: NSLocalizedString("close_window_on_paste", comment: "Zatvoriť okno pri vložení"),
+            action: #selector(toggleCloseWindowOnPaste),
+            keyEquivalent: ""
+        )
+        closeWindowItem.target = self
+        closeWindowItem.state = closeWindowOnPaste ? .on : .off
 
         // Položka "Spustiť pri štarte"
         let launchAtStartupItem = NSMenuItem(
@@ -80,6 +109,7 @@ class StatusBarManager {
         menu.addItem(aboutItem)
         menu.addItem(.separator()) // Oddelovač
         menu.addItem(openWindowItem)
+        menu.addItem(closeWindowItem)
         menu.addItem(launchAtStartupItem)
         menu.addItem(.separator()) // Oddelovač
 
@@ -101,6 +131,12 @@ class StatusBarManager {
     @objc private func toggleOpenWindowOnCopy() {
         openWindowOnCopy.toggle()
         appLog("🔄 Otvoriť okno pri kopírovaní: \(openWindowOnCopy ? "Zapnuté" : "Vypnuté")", level: .info)
+    }
+    
+    /// Prepne stav "Zatvoriť okno pri vložení".
+    @objc private func toggleCloseWindowOnPaste() {
+        closeWindowOnPaste.toggle()
+        appLog("🔄 Zatvoriť okno pri vložení: \(closeWindowOnPaste ? "Zapnuté" : "Vypnuté")", level: .info)
     }
     
     /// Prepne stav automatického spúšťania aplikácie pri štarte systému.

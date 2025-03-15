@@ -96,5 +96,10 @@ class ClipboardManager: ObservableObject {
         WindowManager.shared.restorePreviousFocus()
 
         appLog("📋 Vložený text: \(textToPaste)", level: .info)
+        
+        // Ak je povolené "Zatvoriť okno pri vložení", zatvoríme ho
+        if StatusBarManager.shared.closeWindowOnPaste {
+            WindowManager.shared.closeWindow()
+        }
     }
 }
