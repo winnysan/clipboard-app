@@ -18,6 +18,40 @@
         }
       }
     },
+    "accessibility_permission_message" : {
+      "comment" : "Aplikácia potrebuje oprávnenie na sledovanie klávesových skratiek.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The application needs permission to track keyboard shortcuts. Enable it in System Settings > Privacy & Security > Accessibility."
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aplikácia potrebuje oprávnenie na sledovanie klávesových skratiek. Povoľte ju v Systémové nastavenia > Súkromie a bezpečnosť > Prístupnosť."
+          }
+        }
+      }
+    },
+    "accessibility_permission_required" : {
+      "comment" : "Oprávnenie požadované",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accessibility permission required"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oprávnenie požadované"
+          }
+        }
+      }
+    },
     "allow" : {
       "comment" : "Tlačidlo na povolenie",
       "extractionState" : "manual",
