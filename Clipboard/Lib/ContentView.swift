@@ -21,33 +21,44 @@ struct ContentView: View {
                 ScrollView {
                     VStack(spacing: 8) { // Menšie medzery medzi položkami
                         ForEach(clipboardManager.clipboardHistory, id: \.self) { text in
-                            Button(action: {
-                                appLog("🟡 Kliknuté na text: \(text)", level: .info)
-                                clipboardManager.pasteText(text)
-                            }) {
-                                HStack {
-                                    /// Zobrazenie skopírovaného textu s obmedzením na 3 riadky.
-                                    Text(text)
-                                        .padding()
-                                        .frame(maxWidth: .infinity, alignment: .leading) // Zarovnanie vľavo
-                                        .lineLimit(3) // Obmedzenie počtu riadkov
-                                    Spacer()
-                                }
-                                .background(hoveredItem == text ? Color.white.opacity(0.25) : Color.white.opacity(0.15)) // Efekt hoveru
-                                .cornerRadius(10)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 10)
-                                        .stroke(Color.gray.opacity(0.3), lineWidth: 1) // Jemný okraj
-                                )
-                                .contentShape(Rectangle()) // Klikateľná celá plocha
-                                .onHover { hovering in
-                                    withAnimation(.easeInOut(duration: 0.15)) {
-                                        hoveredItem = hovering ? text : nil
+                            HStack {
+                                Button(action: {
+                                    appLog("🟡 Kliknuté na text: \(text)", level: .info)
+                                    clipboardManager.pasteText(text)
+                                }) {
+                                    HStack {
+                                        /// Zobrazenie skopírovaného textu s obmedzením na 3 riadky.
+                                        Text(text)
+                                            .padding()
+                                            .frame(maxWidth: .infinity, alignment: .leading) // Zarovnanie vľavo
+                                            .lineLimit(3) // Obmedzenie počtu riadkov
+                                        Spacer()
+                                    }
+                                    .background(hoveredItem == text ? Color.white.opacity(0.25) : Color.white.opacity(0.15)) // Efekt hoveru
+                                    .cornerRadius(10)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .stroke(Color.gray.opacity(0.3), lineWidth: 1) // Jemný okraj
+                                    )
+                                    .contentShape(Rectangle()) // Klikateľná celá plocha
+                                    .onHover { hovering in
+                                        withAnimation(.easeInOut(duration: 0.15)) {
+                                            hoveredItem = hovering ? text : nil
+                                        }
                                     }
                                 }
+                                .buttonStyle(.plain) // Odstránenie defaultného tlačidlového štýlu
+                                .id(text) // Unikátne ID pre skrolovanie
+
+                                /// Tlačidlo na pripnutie položky, aby zostala v histórii aj po reštarte.
+                                Button(action: {
+                                    clipboardManager.togglePin(text)
+                                }) {
+                                    Image(systemName: clipboardManager.pinnedItems.contains(text) ? "pin.fill" : "pin")
+                                        .padding(8)
+                                }
+                                .buttonStyle(.borderless) // Štýl tlačidla bez rámu
                             }
-                            .buttonStyle(.plain) // Odstránenie defaultného tlačidlového štýlu
-                            .id(text) // Unikátne ID pre skrolovanie
                         }
                     }
                     .padding(.horizontal, 12) // Jemná medzera na krajoch zoznamu
@@ -66,3 +77,4 @@ struct ContentView: View {
         .frame(width: 300, height: 400)
     }
 }
+
