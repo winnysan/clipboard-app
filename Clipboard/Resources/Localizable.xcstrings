@@ -70,6 +70,22 @@
         }
       }
     },
+    "application_has_no_permissions" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⚠️ The application does not have access to the keyboard controls."
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⚠️ Aplikácia nemá prístup k ovládaniu klávesnice."
+          }
+        }
+      }
+    },
     "cancel" : {
       "comment" : "Tlačidlo na zrušenie",
       "extractionState" : "manual",
@@ -172,6 +188,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Povoliť automatické spustenie?"
+          }
+        }
+      }
+    },
+    "open_settings" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open settings"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otvoriť nastavenia"
           }
         }
       }

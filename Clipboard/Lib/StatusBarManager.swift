@@ -55,7 +55,13 @@ class StatusBarManager {
             button.sendAction(on: [.leftMouseUp, .rightMouseUp]) // Povolenie akcií na ľavé aj pravé tlačidlo
         }
     }
-    
+
+    /// Aktualizuje ikonku podľa stavu oprávnenia.
+    func updateIcon(authorized: Bool) {
+        let iconName = authorized ? "clipboard" : "exclamationmark.triangle.fill"
+        statusItem?.button?.image = NSImage(systemSymbolName: iconName, accessibilityDescription: "Permission Status")
+    }
+
     /// Akcia pri kliknutí na ikonku stavovej lišty - zobrazí alebo skryje okno aplikácie.
     @objc private func statusBarButtonClicked(_ sender: NSStatusBarButton) {
         let event = NSApp.currentEvent
@@ -66,7 +72,7 @@ class StatusBarManager {
             WindowManager.shared.toggleWindow() // Kliknutie ľavým tlačidlom → otvorí/zatvorí okno
         }
     }
-    
+
     /// Zobrazí kontextové menu pri kliknutí pravým tlačidlom na ikonku stavovej lišty.
     private func showContextMenu() {
         let menu = NSMenu()
@@ -153,14 +159,14 @@ class StatusBarManager {
     
     /// Zobrazí okno "O aplikácii"
     @objc private func showAboutWindow() {
-         let appVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "Unknown"
-         let informativeText = String(format: NSLocalizedString("informative_text", comment: "Informácie o aplikácii"), appVersion)
-         
-         let alert = NSAlert()
-         alert.messageText = NSLocalizedString("clipboard_app_title", comment: "Nadpis aplikácie")
-         alert.informativeText = informativeText
-         alert.alertStyle = .informational
-         alert.addButton(withTitle: "OK")
-         alert.runModal()
+        let appVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "Unknown"
+        let informativeText = String(format: NSLocalizedString("informative_text", comment: "Informácie o aplikácii"), appVersion)
+        
+        let alert = NSAlert()
+        alert.messageText = NSLocalizedString("clipboard_app_title", comment: "Nadpis aplikácie")
+        alert.informativeText = informativeText
+        alert.alertStyle = .informational
+        alert.addButton(withTitle: "OK")
+        alert.runModal()
     }
 }

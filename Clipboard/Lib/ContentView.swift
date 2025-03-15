@@ -6,6 +6,9 @@ struct ContentView: View {
     /// Odkaz na `ClipboardManager` pre správu histórie a interakcie so schránkou.
     @ObservedObject var clipboardManager = ClipboardManager.shared
 
+    /// Odkaz na `SystemPermissionManager` pre kontrolu oprávnení.
+    @ObservedObject private var permissionManager = SystemPermissionManager.shared
+
     /// Premenná na sledovanie, ktorá položka je pod kurzorom myši.
     @State private var hoveredItem: String? = nil
 
@@ -15,6 +18,26 @@ struct ContentView: View {
             Text(LocalizedStringResource("clipboard_app_title"))
                 .font(.headline)
                 .padding()
+
+            /// Ak chýbajú oprávnenia, zobrazí sa upozornenie s odkazom na ich povolenie.
+            if !permissionManager.hasPermission {
+                VStack {
+                    Text(LocalizedStringResource("application_has_no_permissions"))
+                        .font(.subheadline)
+                        .foregroundColor(.red)
+                        .multilineTextAlignment(.center)
+                        .padding(.bottom, 4)
+                    
+                    Button(action: {
+                        permissionManager.openAccessibilitySettings()
+                    }) {
+                        Text(LocalizedStringResource("open_settings"))
+                            .font(.system(size: 14, weight: .bold))
+                    }
+                    .buttonStyle(.bordered)
+                }
+                .padding(.horizontal, 12)
+            }
 
             /// Zabezpečenie správneho skrolovania pri zmene histórie.
             ScrollViewReader { proxy in

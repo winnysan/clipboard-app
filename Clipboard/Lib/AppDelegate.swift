@@ -1,4 +1,5 @@
 import Cocoa
+import Combine
 
 /// Hlavný delegát aplikácie, ktorý inicializuje a spravuje jej životný cyklus.
 /// Zodpovedá za požiadanie oprávnení, spustenie sledovania klávesových skratiek,
@@ -8,7 +9,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private var keyboardManager: KeyboardManager?
 
     /// Správca systémových oprávnení.
-    private let systemPermissionManager = SystemPermissionManager()
+    private let systemPermissionManager = SystemPermissionManager.shared
+
+    /// Ukladá `AnyCancellable` objekty pre sledovanie zmien oprávnenia.
+    private var cancellables = Set<AnyCancellable>()
 
     /// Volá sa pri spustení aplikácie a inicializuje potrebné služby.
     /// - Parameter aNotification: Systémová notifikácia pri štarte aplikácie.
@@ -26,20 +30,30 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         // Požiadavka na oprávnenia pre Accessibility API
         systemPermissionManager.requestAccessibilityPermission()
+        
+        // Spustíme sledovanie oprávnení a zabezpečíme, že klávesové skratky sa aktivujú po ich udelení
+        systemPermissionManager.startMonitoringPermission()
 
-        // Spustenie sledovania klávesov (iba ak máme oprávnenia)
-        if systemPermissionManager.hasAccessibilityPermission() {
-            keyboardManager = KeyboardManager()
-            appLog("⌨️ Sledovanie klávesových skratiek bolo spustené.", level: .info)
-        } else {
-            appLog("⚠️ Klávesové skratky nebudú fungovať, kým neudelíte oprávnenie v Nastaveniach.", level: .warning)
+        // Pri zmene oprávnení okamžite aktualizujeme stav klávesových skratiek
+        systemPermissionManager.$hasPermission.sink { hasPermission in
+            if hasPermission {
+                if self.keyboardManager == nil {
+                    self.keyboardManager = KeyboardManager()
+                    appLog("⌨️ Sledovanie klávesových skratiek bolo spustené.", level: .info)
+                }
+            } else {
+                self.keyboardManager = nil
+                appLog("⚠️ Klávesové skratky boli deaktivované kvôli chýbajúcim oprávneniam.", level: .warning)
+            }
         }
+        .store(in: &cancellables)
     }
 
     /// Volá sa pri ukončení aplikácie a uvoľňuje zdroje.
     /// - Parameter aNotification: Systémová notifikácia pri ukončení aplikácie.
     func applicationWillTerminate(_ aNotification: Notification) {
         keyboardManager = nil
+        systemPermissionManager.stopMonitoringPermission() // Ukončí sledovanie oprávnení
         appLog("🚪 Aplikácia bola ukončená.", level: .info)
     }
 }
