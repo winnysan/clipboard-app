@@ -31,9 +31,13 @@ class ClipboardManager: ObservableObject {
             }
         }
 
-        return appDirectory.appendingPathComponent("clipboard_history.json")
-    }()
+        let filePath = appDirectory.appendingPathComponent("clipboard_history.json")
 
+        // Logovanie kompletnej cesty v terminálovom formáte
+        appLog("📂 Súbor histórie: \"\(filePath.path)\"", level: .info)
+
+        return filePath
+    }()
 
     /// Privátny inicializátor zabraňujúci vytvoreniu ďalších inštancií.
     private init() {
@@ -64,19 +68,20 @@ class ClipboardManager: ObservableObject {
             if let copiedText = pasteboard.string(forType: .string), !copiedText.isEmpty {
                 appLog("📋 Skopírovaný text: \(copiedText)", level: .info)
 
-                // Pridáme do histórie iba ak už nie je uložený
-                if !self.clipboardHistory.contains(copiedText) {
-                    self.clipboardHistory.insert(copiedText, at: 0)
+                // Skontrolujeme, či už existuje v histórii a odstránime ho
+                self.clipboardHistory.removeAll { $0 == copiedText }
 
-                    // Zachováme iba pripnuté položky v histórii po reštarte
-                    if self.pinnedItems.contains(copiedText) {
-                        self.saveHistory()
-                    }
+                // Pridáme ho na začiatok histórie
+                self.clipboardHistory.insert(copiedText, at: 0)
 
-                    // Zabezpečíme, že história nepresiahne maximálny limit
-                    if self.clipboardHistory.count > self.maxHistorySize {
-                        self.clipboardHistory.removeLast()
-                    }
+                // Ak je pripnutý, ostáva pripnutý a uložíme ho do JSON
+                if self.pinnedItems.contains(copiedText) {
+                    self.saveHistory()
+                }
+
+                // Zabezpečíme, že história nepresiahne maximálny limit
+                if self.clipboardHistory.count > self.maxHistorySize {
+                    self.clipboardHistory.removeLast()
                 }
 
                 // Ak je povolené "Otvoriť okno pri kopírovaní", zobrazíme ho
