@@ -5,7 +5,8 @@ import Cocoa
 class KeyboardManager {
     /// Mach port na zachytávanie globálnych klávesových vstupov
     private var eventTap: CFMachPort?
-
+    private var runLoopSource: CFRunLoopSource?
+    
     /// Inicializácia sledovania klávesových vstupov
     init() {
         setupEventTap()
@@ -59,9 +60,42 @@ class KeyboardManager {
         }
     }
 
+    /// Deaktivuje sledovanie klávesových skratiek
+    func disableEventTap() {
+        if let eventTap = eventTap {
+            CGEvent.tapEnable(tap: eventTap, enable: false)
+            appLog("🛑 Event Tap bol deaktivovaný.", level: .info)
+        }
+    }
+
+    /// Reaktivuje sledovanie klávesových skratiek
+    func enableEventTap() {
+        if let eventTap = eventTap {
+            CGEvent.tapEnable(tap: eventTap, enable: true)
+            appLog("✅ Event Tap bol aktivovaný.", level: .info)
+        }
+    }
+
+    /// Zničí Event Tap pri strate oprávnenia
+    func destroyEventTap() {
+        if let eventTap = eventTap {
+            CGEvent.tapEnable(tap: eventTap, enable: false)
+            
+            if let runLoopSource = runLoopSource {
+                CFRunLoopRemoveSource(CFRunLoopGetCurrent(), runLoopSource, .commonModes)
+            }
+
+            CFMachPortInvalidate(eventTap) // ✅ Správne invalidovanie Event Tap
+            self.eventTap = nil
+            self.runLoopSource = nil
+            
+            appLog("🔻 Event Tap bol úplne odstránený.", level: .info)
+        }
+    }
+
     /// Deštruktor - uvoľnenie Event Tap pri ukončení aplikácie
     deinit {
-        appLog("🔻 KeyboardManager deinicializovaný, Event Tap uvoľnený.", level: .debug)
-        eventTap = nil
+        destroyEventTap()
+        appLog("🔻 KeyboardManager deinicializovaný.", level: .debug)
     }
 }

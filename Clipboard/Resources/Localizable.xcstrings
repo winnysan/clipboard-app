@@ -193,6 +193,7 @@
       }
     },
     "open_settings" : {
+      "comment" : "Otvoriť nastavenia",
       "localizations" : {
         "en" : {
           "stringUnit" : {

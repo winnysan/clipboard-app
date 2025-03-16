@@ -11,11 +11,12 @@ class SystemPermissionManager: ObservableObject {
     
     private var permissionCheckTimer: AnyCancellable?
     private var lastPermissionState: Bool = AXIsProcessTrusted() // Ukladá posledný stav oprávnenia
+    private var keyboardManager: KeyboardManager?
 
     /// Privátny inicializátor, aby bola trieda Singleton.
     private init() {}
 
-    /// Spustí nepretržité sledovanie oprávnenia a aktualizuje ikonku stavovej lišty.
+    /// Spustí nepretržité sledovanie oprávnenia.
     func startMonitoringPermission() {
         permissionCheckTimer = Timer.publish(every: 1, on: .main, in: .common)
             .autoconnect()
@@ -26,11 +27,29 @@ class SystemPermissionManager: ObservableObject {
                     self.hasPermission = newState
                     StatusBarManager.shared.updateIcon(authorized: newState)
 
-                    if !newState {
-                        appLog("⚠️ Oprávnenie stratene! Prosím, povoľte ho v nastaveniach.", level: .warning)
+                    if newState {
+                        appLog("✅ Oprávnenie udelené! Spúšťam sledovanie kláves...", level: .info)
+                        self.startKeyboardMonitoring()
+                    } else {
+                        appLog("⚠️ Oprávnenie stratene! Zastavujem sledovanie kláves...", level: .warning)
+                        self.stopKeyboardMonitoring()
                     }
                 }
             }
+    }
+    
+    /// Spustí sledovanie klávesových skratiek.
+    private func startKeyboardMonitoring() {
+        if keyboardManager == nil {
+            keyboardManager = KeyboardManager()
+        } else {
+            keyboardManager?.enableEventTap()
+        }
+    }
+
+    /// Zastaví sledovanie klávesových skratiek.
+    private func stopKeyboardMonitoring() {
+        keyboardManager?.disableEventTap()
     }
 
     /// Ukončí sledovanie oprávnenia.
