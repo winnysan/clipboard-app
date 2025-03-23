@@ -17,6 +17,9 @@ class StatusBarManager {
     
     /// Kľúč pre nastavenie "Zatvoriť okno pri vložení".
     private let closeWindowOnPasteKey = "closeWindowOnPaste"
+    
+    /// Kľúč pre nastavenie "Sledovanie systémovej schránky".
+    private let monitorClipboardKey = "monitorClipboard"
 
     /// Hodnota pre "Otvoriť okno pri kopírovaní"
     var openWindowOnCopy: Bool {
@@ -29,12 +32,19 @@ class StatusBarManager {
         get { defaults.bool(forKey: closeWindowOnPasteKey) }
         set { defaults.set(newValue, forKey: closeWindowOnPasteKey) }
     }
+    
+    /// Hodnota pre "Sledovanie systémovej schránky".
+    var monitorClipboard: Bool {
+        get { defaults.bool(forKey: monitorClipboardKey) }
+        set { defaults.set(newValue, forKey: monitorClipboardKey) }
+    }
      
     /// Registrovanie predvolených hodnôt pri prvom spustení aplikácie.
     func registerDefaultPreferences() {
         let defaultValues: [String: Any] = [
             openWindowOnCopyKey: false,  // Predvolene vypnuté
-            closeWindowOnPasteKey: true // Predvolene zapnuté
+            closeWindowOnPasteKey: true, // Predvolene zapnuté
+            monitorClipboardKey: true // Predvolene zapnuté
         ]
         defaults.register(defaults: defaultValues)
     }
@@ -45,6 +55,11 @@ class StatusBarManager {
     /// Inicializuje ikonku v stavovej lište a nastaví akcie.
     func setupStatusBar() {
         registerDefaultPreferences() // Zavolanie metódy na registráciu predvolených hodnôt
+        
+        // Spustí sledovanie po štarte
+        if monitorClipboard {
+            ClipboardManager.shared.startMonitoringClipboard()
+        }
         
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         
@@ -84,7 +99,16 @@ class StatusBarManager {
             keyEquivalent: ""
         )
         aboutItem.target = self
-
+        
+        // Položka "Sledovať systémovú schránku"
+        let monitorClipboardItem = NSMenuItem(
+            title: NSLocalizedString("monitor_clipboard", comment: "Sledovať systémovú schránku"),
+            action: #selector(toggleMonitorClipboard),
+            keyEquivalent: ""
+        )
+        monitorClipboardItem.target = self
+        monitorClipboardItem.state = monitorClipboard ? .on : .off
+        
         // Položka "Otvoriť okno pri kopírovaní"
         let openWindowItem = NSMenuItem(
             title: NSLocalizedString("open_window_on_copy", comment: "Otvoriť okno pri kopírovaní"),
@@ -114,6 +138,7 @@ class StatusBarManager {
 
         menu.addItem(aboutItem)
         menu.addItem(.separator()) // Oddelovač
+        menu.addItem(monitorClipboardItem)
         menu.addItem(openWindowItem)
         menu.addItem(closeWindowItem)
         menu.addItem(launchAtStartupItem)
@@ -131,6 +156,20 @@ class StatusBarManager {
         statusItem?.menu = menu
         statusItem?.button?.performClick(nil) // Simuluje kliknutie na ikonu pre zobrazenie menu
         statusItem?.menu = nil // Po kliknutí na položku menu resetuje menu, aby neboli vizuálne chyby
+    }
+    
+    /// Zapne alebo vypne možnosť sledovania systémovej schránky.
+    @objc private func toggleMonitorClipboard() {
+        monitorClipboard.toggle()
+        defaults.set(monitorClipboard, forKey: monitorClipboardKey)
+
+        if monitorClipboard {
+            ClipboardManager.shared.startMonitoringClipboard()
+            appLog("🟢 Zapnuté sledovanie systémovej schránky", level: .info)
+        } else {
+            ClipboardManager.shared.stopMonitoringClipboard()
+            appLog("🔴 Vypnuté sledovanie systémovej schránky", level: .info)
+        }
     }
 
     /// Prepne stav "Otvoriť okno pri kopírovaní"

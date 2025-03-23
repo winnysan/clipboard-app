@@ -16,6 +16,11 @@ class ClipboardManager: ObservableObject {
     /// Pripnuté položky, ktoré sa uchovajú aj po reštarte aplikácie
     @Published var pinnedItems: Set<String> = []
     
+    /// Sledovanie systémovej schránky
+    private var clipboardCheckTimer: Timer?
+    private var lastChangeCount: Int = NSPasteboard.general.changeCount
+    private var lastWrittenText: String? = nil
+    
     /// Cesta k súboru, kde sa bude ukladať história
     private let historyFileURL: URL = {
         let directory = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
@@ -107,6 +112,7 @@ class ClipboardManager: ObservableObject {
 
         pasteboard.clearContents()
         pasteboard.setString(textToPaste, forType: .string)
+        lastWrittenText = textToPaste
 
         // Simulácia Cmd + V na vloženie textu
         let source = CGEventSource(stateID: .hidSystemState)
@@ -183,5 +189,51 @@ class ClipboardManager: ObservableObject {
         clipboardHistory.removeAll { $0 == text } // Odstráni z histórie
         pinnedItems.remove(text) // Odstráni z pripnutých
         saveHistory() // Uložíme len pripnuté položky
+    }
+    
+    /// Spustí sledovanie zmien v systémovej schránke
+    func startMonitoringClipboard() {
+        clipboardCheckTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { _ in
+            let pasteboard = NSPasteboard.general
+            let currentChangeCount = pasteboard.changeCount
+
+            if currentChangeCount != self.lastChangeCount {
+                self.lastChangeCount = currentChangeCount
+
+                if let newText = pasteboard.string(forType: .string), !newText.isEmpty {
+                    if newText == self.lastWrittenText {
+                        appLog("🔁 Preskočené: vložený text je náš vlastný", level: .debug)
+                        self.lastWrittenText = nil
+                        return
+                    }
+
+                    appLog("📥 Zistená nová položka v schránke: \(newText)", level: .info)
+                    self.clipboardHistory.removeAll { $0 == newText }
+                    self.clipboardHistory.insert(newText, at: 0)
+
+                    if self.pinnedItems.contains(newText) {
+                        self.saveHistory()
+                    }
+
+                    if self.clipboardHistory.count > self.maxHistorySize {
+                        self.clipboardHistory.removeLast()
+                    }
+
+                    if StatusBarManager.shared.openWindowOnCopy {
+                        WindowManager.shared.openWindow()
+                    }
+                }
+            }
+        }
+
+        RunLoop.main.add(clipboardCheckTimer!, forMode: .common)
+        appLog("🔄 Spustené sledovanie systémovej schránky", level: .info)
+    }
+    
+    /// Zastaví sledovanie zmien v systémovej schránke.
+    func stopMonitoringClipboard() {
+        clipboardCheckTimer?.invalidate()
+        clipboardCheckTimer = nil
+        appLog("🛑 Sledovanie systémovej schránky bolo zastavené", level: .info)
     }
 }

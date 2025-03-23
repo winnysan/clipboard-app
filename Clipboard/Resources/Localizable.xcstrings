@@ -192,6 +192,23 @@
         }
       }
     },
+    "monitor_clipboard" : {
+      "comment" : "Sledovať systémovú schránku",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Monitor the system clipboard"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sledovať systémovú schránku"
+          }
+        }
+      }
+    },
     "open_settings" : {
       "comment" : "Otvoriť nastavenia",
       "localizations" : {

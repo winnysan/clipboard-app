@@ -54,6 +54,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationWillTerminate(_ aNotification: Notification) {
         keyboardManager = nil
         systemPermissionManager.stopMonitoringPermission() // Ukončí sledovanie oprávnení
+        ClipboardManager.shared.stopMonitoringClipboard()
         appLog("🚪 Aplikácia bola ukončená.", level: .info)
     }
 }

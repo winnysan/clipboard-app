@@ -29,7 +29,7 @@ class KeyboardManager {
             // Ak je stlačené Control + C, skopíruje označený text
             if flags.contains(.maskControl) && keyCode == 8 { // 8 = C
                 appLog("📝 Stlačené: Control + C", level: .info)
-                ClipboardManager.shared.copySelectedText()
+                ClipboardManager.shared.copySelectedText()                
                 return nil // Zablokuje pôvodnú akciu
             }
             
