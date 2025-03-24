@@ -33,6 +33,13 @@ class KeyboardManager {
                 return nil // Zablokuje pôvodnú akciu
             }
             
+            // Ak je stlačené Control + X, vykoná vystrihnutie
+            if flags.contains(.maskControl) && keyCode == 7 { // 7 = X
+                appLog("✂️ Stlačené: Control + X", level: .info)
+                ClipboardManager.shared.copySelectedText(cut: true)
+                return nil // Zablokuje pôvodnú akciu
+            }
+            
             // Ak je stlačené Control + V, vloží posledný skopírovaný text
             if flags.contains(.maskControl) && keyCode == 9 { // 9 = V
                 appLog("📋 Stlačené: Control + V", level: .info)
@@ -91,6 +98,45 @@ class KeyboardManager {
             
             appLog("🔻 Event Tap bol úplne odstránený.", level: .info)
         }
+    }
+    
+    /// Simuluje stlačenie klávesovej skratky Cmd + C (kopírovanie).
+    static func simulateCmdC() {
+        let source = CGEventSource(stateID: .hidSystemState)
+        let cmdDown = CGEvent(keyboardEventSource: source, virtualKey: 0x37, keyDown: true)
+        let cDown   = CGEvent(keyboardEventSource: source, virtualKey: 0x08, keyDown: true)
+        let cUp     = CGEvent(keyboardEventSource: source, virtualKey: 0x08, keyDown: false)
+        let cmdUp   = CGEvent(keyboardEventSource: source, virtualKey: 0x37, keyDown: false)
+
+        cmdDown?.flags = .maskCommand
+        cDown?.flags = .maskCommand
+
+        cmdDown?.post(tap: .cghidEventTap)
+        cDown?.post(tap: .cghidEventTap)
+        cUp?.post(tap: .cghidEventTap)
+        cmdUp?.post(tap: .cghidEventTap)
+
+        appLog("⌨️ Simulovaný Cmd + C", level: .debug)
+    }
+
+
+    /// Simuluje stlačenie klávesovej skratky Cmd + X (vystrihnutie).
+    static func simulateCmdX() {
+        let source = CGEventSource(stateID: .hidSystemState)
+        let cmdDown = CGEvent(keyboardEventSource: source, virtualKey: 0x37, keyDown: true)
+        let xDown   = CGEvent(keyboardEventSource: source, virtualKey: 0x07, keyDown: true)
+        let xUp     = CGEvent(keyboardEventSource: source, virtualKey: 0x07, keyDown: false)
+        let cmdUp   = CGEvent(keyboardEventSource: source, virtualKey: 0x37, keyDown: false)
+
+        cmdDown?.flags = .maskCommand
+        xDown?.flags = .maskCommand
+
+        cmdDown?.post(tap: .cghidEventTap)
+        xDown?.post(tap: .cghidEventTap)
+        xUp?.post(tap: .cghidEventTap)
+        cmdUp?.post(tap: .cghidEventTap)
+
+        appLog("⌨️ Simulovaný Cmd + X", level: .debug)
     }
 
     /// Deštruktor - uvoľnenie Event Tap pri ukončení aplikácie

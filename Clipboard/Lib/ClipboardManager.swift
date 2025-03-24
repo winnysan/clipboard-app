@@ -49,29 +49,25 @@ class ClipboardManager: ObservableObject {
         loadHistory()
     }
 
-    /// Skopíruje označený text zo systému, uloží ho do histórie a zobrazí okno aplikácie.
-    func copySelectedText() {
+    /// Skopíruje alebo vystrihne označený text zo systému, uloží ho do histórie a zobrazí okno aplikácie.
+    /// - Parameter cut: Ak je true, vykoná vystrihnutie (Cmd + X). Inak kopírovanie (Cmd + C).
+    func copySelectedText(cut: Bool = false) {
         let pasteboard = NSPasteboard.general
 
-        // Simulácia stlačenia Cmd + C na skopírovanie označeného textu
-        let source = CGEventSource(stateID: .hidSystemState)
-        let cmdDown = CGEvent(keyboardEventSource: source, virtualKey: 0x37, keyDown: true) // Command
-        let cDown = CGEvent(keyboardEventSource: source, virtualKey: 0x08, keyDown: true) // C
-        let cmdUp = CGEvent(keyboardEventSource: source, virtualKey: 0x37, keyDown: false)
-        let cUp = CGEvent(keyboardEventSource: source, virtualKey: 0x08, keyDown: false)
-
-        cmdDown?.flags = .maskCommand
-        cDown?.flags = .maskCommand
-
-        cmdDown?.post(tap: .cghidEventTap)
-        cDown?.post(tap: .cghidEventTap)
-        cUp?.post(tap: .cghidEventTap)
-        cmdUp?.post(tap: .cghidEventTap)
+        if cut {
+            KeyboardManager.simulateCmdX()
+        } else {
+            KeyboardManager.simulateCmdC()
+        }
 
         // Po krátkom čase prečítame obsah schránky a spracujeme ho
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             if let copiedText = pasteboard.string(forType: .string), !copiedText.isEmpty {
-                appLog("📋 Skopírovaný text: \(copiedText)", level: .info)
+                if cut {
+                    appLog("📋 Vystrihnutý text: \(copiedText)", level: .info)
+                } else {
+                    appLog("📋 Skopírovaný text: \(copiedText)", level: .info)
+                }
 
                 // Skontrolujeme, či už existuje v histórii a odstránime ho
                 self.clipboardHistory.removeAll { $0 == copiedText }
