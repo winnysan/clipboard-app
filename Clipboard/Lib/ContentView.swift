@@ -15,9 +15,18 @@ struct ContentView: View {
     var body: some View {
         VStack {
             /// Názov aplikácie zobrazený v hlavičke.
-            Text(LocalizedStringResource("clipboard_app_title"))
-                .font(.headline)
-                .padding()
+            HStack(spacing: 8) {
+                Text(LocalizedStringResource("clipboard_app_title"))
+                    .font(.headline)
+                
+                if PurchaseManager.shared.isProUnlocked {
+                    Text(LocalizedStringResource("pro"))
+                        .font(.headline)
+                        .fontWeight(.bold)
+                        .foregroundColor(.accentColor)
+                }
+            }
+            .padding()
 
             /// Ak chýbajú oprávnenia, zobrazí sa upozornenie s odkazom na ich povolenie.
             if !permissionManager.hasPermission {

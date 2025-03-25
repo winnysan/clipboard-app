@@ -243,6 +243,23 @@
         }
       }
     },
+    "pro" : {
+      "comment" : "Príznak odomknutej PRO verzie",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PRO"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PRO"
+          }
+        }
+      }
+    },
     "quit" : {
       "comment" : "Tlačidlo na ukončenie aplikácie",
       "extractionState" : "manual",
