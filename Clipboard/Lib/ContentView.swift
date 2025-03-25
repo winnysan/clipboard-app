@@ -1,7 +1,7 @@
 import SwiftUI
 
-/// Hlavné zobrazenie aplikácie zobrazujúce históriu skopírovaných textov.
-/// Každá položka v zozname je klikateľná a umožňuje rýchle vloženie vybraného textu.
+/// Hlavné zobrazenie aplikácie zobrazujúce históriu skopírovaných textov a obrázkov.
+/// Každá položka v zozname je klikateľná a umožňuje rýchle vloženie.
 struct ContentView: View {
     /// Odkaz na `ClipboardManager` pre správu histórie a interakcie so schránkou.
     @ObservedObject var clipboardManager = ClipboardManager.shared
@@ -10,7 +10,7 @@ struct ContentView: View {
     @ObservedObject private var permissionManager = SystemPermissionManager.shared
 
     /// Premenná na sledovanie, ktorá položka je pod kurzorom myši.
-    @State private var hoveredItem: String? = nil
+    @State private var hoveredItem: ClipboardItem? = nil
 
     var body: some View {
         VStack {
@@ -52,44 +52,66 @@ struct ContentView: View {
             ScrollViewReader { proxy in
                 ScrollView {
                     VStack(spacing: 8) { // Menšie medzery medzi položkami
-                        ForEach(clipboardManager.clipboardHistory, id: \.self) { text in
+                        ForEach(clipboardManager.clipboardHistory, id: \.self) { item in
+                            let isHovered = hoveredItem == item
+                            
                             HStack(alignment: .top) {
                                 Button(action: {
-                                    clipboardManager.pasteText(text)
+                                    clipboardManager.pasteText(item.textValue)
                                 }) {
                                     HStack {
-                                        /// Zobrazenie skopírovaného textu s obmedzením na 3 riadky.
-                                        Text(text)
+                                        // Zobrazenie textu alebo typ položky
+                                        if let text = item.textValue {
+                                            Text(text)
+                                                .padding()
+                                                .frame(maxWidth: .infinity, alignment: .leading)
+                                                .lineLimit(3)
+                                        } else if let imageName = item.imageFileName,
+                                            let imageURL = ImageManager.shared.imageFileURL(for: imageName),
+                                            let nsImage = NSImage(contentsOf: imageURL) {
+
+                                            HStack {
+                                                Image(nsImage: nsImage)
+                                                    .resizable()
+                                                    .aspectRatio(contentMode: .fit)
+                                                    .frame(maxHeight: 60) // výška obmedzená, šírka sa prispôsobí
+                                                    .cornerRadius(8)
+                                                    .overlay(
+                                                        RoundedRectangle(cornerRadius: 8)
+                                                            .stroke(Color.white.opacity(0.2), lineWidth: 1)
+                                                    )
+                                                    .shadow(color: .black.opacity(0.15), radius: 3, x: 0, y: 1)
+                                            }
+                                            .frame(maxWidth: .infinity, alignment: .leading)
                                             .padding()
-                                            .frame(maxWidth: .infinity, alignment: .leading) // Zarovnanie vľavo
-                                            .lineLimit(3) // Obmedzenie počtu riadkov
+                                        }
                                         Spacer()
                                     }
-                                    .background(hoveredItem == text ? Color.white.opacity(0.25) : Color.white.opacity(0.15)) // Efekt hoveru
+                                    .background(isHovered ? Color.white.opacity(0.25) : Color.white.opacity(0.15)) // Efekt hoveru
                                     .cornerRadius(10)
                                     .contentShape(Rectangle()) // Klikateľná celá plocha
                                     .onHover { hovering in
                                         withAnimation(.easeInOut(duration: 0.15)) {
-                                            hoveredItem = hovering ? text : nil
+                                            hoveredItem = hovering ? item : nil
                                         }
                                     }
                                 }
                                 .buttonStyle(.plain) // Odstránenie defaultného tlačidlového štýlu
-                                .id(text) // Unikátne ID pre skrolovanie
+                                .id(item) // Unikátne ID pre skrolovanie
 
                                 /// VStack na umiestnenie tlačidiel mimo záznamu vpravo
                                 VStack(alignment: .trailing, spacing: 4) {
                                     /// Tlačidlo na pripnutie položky
                                     Button(action: {
-                                        clipboardManager.togglePin(text)
+                                        clipboardManager.togglePin(item)
                                     }) {
-                                        Image(systemName: clipboardManager.pinnedItems.contains(text) ? "pin.fill" : "pin")
+                                        Image(systemName: clipboardManager.pinnedItems.contains(item) ? "pin.fill" : "pin")
                                     }
                                     .buttonStyle(.borderless) // Odstránenie rámu tlačidla
 
                                     /// Tlačidlo na odstránenie položky (Trash)
                                     Button(action: {
-                                        clipboardManager.removeItem(text)
+                                        clipboardManager.removeItem(item)
                                     }) {
                                         Image(systemName: "trash")
                                     }

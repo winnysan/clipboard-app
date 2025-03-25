@@ -1,5 +1,6 @@
 import Cocoa
 import Combine
+import Foundation
 
 /// Trieda zodpovedná za manipuláciu so schránkou.
 /// Obsahuje funkcie na získanie označeného textu, správu histórie kopírovania a výpis vybraného textu.
@@ -10,12 +11,12 @@ class ClipboardManager: ObservableObject {
     /// Maximálny počet položiek v histórii
     private let maxHistorySize = 100
 
-    /// História skopírovaných textov (najnovší na začiatku)
-    @Published var clipboardHistory: [String] = []
+    /// História skopírovaných položiek (najnovší na začiatku)
+    @Published var clipboardHistory: [ClipboardItem] = []
     
     /// Pripnuté položky, ktoré sa uchovajú aj po reštarte aplikácie
-    @Published var pinnedItems: Set<String> = []
-    
+    @Published var pinnedItems: Set<ClipboardItem> = []
+
     /// Sledovanie systémovej schránky
     private var clipboardCheckTimer: Timer?
     private var lastChangeCount: Int = NSPasteboard.general.changeCount
@@ -70,16 +71,21 @@ class ClipboardManager: ObservableObject {
                 }
 
                 // Skontrolujeme, či už existuje v histórii a odstránime ho
-                self.clipboardHistory.removeAll { $0 == copiedText }
-
-                // Pridáme ho na začiatok histórie
-                self.clipboardHistory.insert(copiedText, at: 0)
-
-                // Ak je pripnutý, ostáva pripnutý a uložíme ho do JSON
-                if self.pinnedItems.contains(copiedText) {
-                    self.saveHistory()
+                self.clipboardHistory.removeAll {
+                    if case .text(let text) = $0 {
+                        return text == copiedText
+                    }
+                    return false
                 }
 
+                // Pridáme ho na začiatok histórie
+                self.clipboardHistory.insert(.text(copiedText), at: 0)
+
+                // Ak je pripnutý, ostáva pripnutý a uložíme ho do JSON
+                if self.pinnedItems.contains(.text(copiedText)) {
+                    self.saveHistory()
+                }
+                
                 // Zabezpečíme, že história nepresiahne maximálny limit
                 if self.clipboardHistory.count > self.maxHistorySize {
                     self.clipboardHistory.removeLast()
@@ -100,8 +106,22 @@ class ClipboardManager: ObservableObject {
     func pasteText(_ text: String? = nil) {
          let pasteboard = NSPasteboard.general
  
-         // Ak nie je zadaný text, použijeme posledný text z histórie.
-         guard let textToPaste = text ?? clipboardHistory.first else {
+        // Ak nie je zadaný text, použijeme prvý text z histórie.
+        let firstTextFromHistory = clipboardHistory.first {
+            if case .text = $0 { return true }
+            return false
+        }
+
+        let resolvedText: String?
+        if let explicitText = text {
+            resolvedText = explicitText
+        } else if case .text(let value) = firstTextFromHistory {
+            resolvedText = value
+        } else {
+            resolvedText = nil
+        }
+
+        guard let textToPaste = resolvedText else {
             appLog("⚠️ Nie je k dispozícii žiadny text na vloženie.", level: .warning)
             return
         }
@@ -141,12 +161,13 @@ class ClipboardManager: ObservableObject {
     
     /// Uloží **iba pripnuté položky** do JSON súboru
     private func saveHistory() {
-        let data: [String: Any] = [
-            "pinnedItems": Array(pinnedItems) // Ukladáme len pripnuté položky
-        ]
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = .prettyPrinted
+
         do {
-            let jsonData = try JSONSerialization.data(withJSONObject: data, options: .prettyPrinted)
+            let jsonData = try encoder.encode(Array(pinnedItems)) // Uložíme len pripnuté položky
             try jsonData.write(to: historyFileURL)
+            appLog("💾 Pripnuté položky boli uložené: \(pinnedItems.count)", level: .info)
         } catch {
             appLog("❌ Chyba pri ukladaní histórie: \(error.localizedDescription)", level: .error)
         }
@@ -157,11 +178,19 @@ class ClipboardManager: ObservableObject {
         guard FileManager.default.fileExists(atPath: historyFileURL.path) else { return }
         do {
             let jsonData = try Data(contentsOf: historyFileURL)
-            if let data = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: Any] {
-                if let savedPinnedItems = data["pinnedItems"] as? [String] {
-                    pinnedItems = Set(savedPinnedItems)
-                    clipboardHistory = savedPinnedItems // Načítame len pripnuté
-                }
+            let decoder = JSONDecoder()
+            let allItems = try decoder.decode([ClipboardItem].self, from: jsonData)
+
+            // Filtrovanie len platných položiek
+            let validItems = allItems.filter { $0.textValue != nil || $0.imageFileName != nil }
+            let removedCount = allItems.count - validItems.count
+
+            pinnedItems = Set(validItems)
+            clipboardHistory = validItems
+
+            appLog("📥 Načítaných pripnutých položiek: \(validItems.count)", level: .info)
+            if removedCount > 0 {
+                appLog("⚠️ Ignorovaných neplatných položiek v histórii: \(removedCount)", level: .warning)
             }
         } catch {
             appLog("❌ Chyba pri načítaní histórie: \(error.localizedDescription)", level: .error)
@@ -169,22 +198,21 @@ class ClipboardManager: ObservableObject {
     }
     
     /// Označí alebo odznačí text ako pripnutý
-    func togglePin(_ text: String) {
-        if pinnedItems.contains(text) {
-            pinnedItems.remove(text) // Odstránime z pripnutých
+    func togglePin(_ item: ClipboardItem) {
+        if pinnedItems.contains(item) {
+            pinnedItems.remove(item) // Odstránime z pripnutých
         } else {
-            pinnedItems.insert(text) // Pridáme medzi pripnuté
+            pinnedItems.insert(item) // Pridáme medzi pripnuté
         }
 
-        // Uložíme len pripnuté položky do JSON-u, ale `clipboardHistory` ostane nezmenené
-        saveHistory()
+        saveHistory() // Uložíme nové pripnuté položky
     }
     
     /// Odstráni položku zo zoznamu aj z pripnutých
-    func removeItem(_ text: String) {
-        clipboardHistory.removeAll { $0 == text } // Odstráni z histórie
-        pinnedItems.remove(text) // Odstráni z pripnutých
-        saveHistory() // Uložíme len pripnuté položky
+    func removeItem(_ item: ClipboardItem) {
+        clipboardHistory.removeAll { $0 == item } // Odstráni z histórie
+        pinnedItems.remove(item)                  // Odstráni z pripnutých
+        saveHistory()                             // Uložíme len pripnuté položky
     }
     
     /// Spustí sledovanie zmien v systémovej schránke
@@ -204,10 +232,15 @@ class ClipboardManager: ObservableObject {
                     }
 
                     appLog("📥 Zistená nová položka v schránke: \(newText)", level: .info)
-                    self.clipboardHistory.removeAll { $0 == newText }
-                    self.clipboardHistory.insert(newText, at: 0)
+                    self.clipboardHistory.removeAll {
+                        if case .text(let value) = $0 {
+                            return value == newText
+                        }
+                        return false
+                    }
+                    self.clipboardHistory.insert(.text(newText), at: 0)
 
-                    if self.pinnedItems.contains(newText) {
+                    if self.pinnedItems.contains(.text(newText)) {
                         self.saveHistory()
                     }
 
@@ -228,8 +261,27 @@ class ClipboardManager: ObservableObject {
 
                     if PurchaseManager.shared.isProUnlocked {
                         if let filename = ImageManager.shared.saveImage(imageData) {
-                            appLog("✅ Obrázok uložený ako súbor: \(filename)", level: .info)
-                            // TODO: Pridaj do histórie ako image položku
+                            let item = ClipboardItem.imageFile(filename)
+
+                            // Zamedz duplicite
+                            self.clipboardHistory.removeAll { $0 == item }
+                            self.clipboardHistory.insert(item, at: 0)
+
+                            appLog("💾 Obrázok pridaný do histórie: \(filename)", level: .info)
+
+                            if self.pinnedItems.contains(item) {
+                                self.saveHistory()
+                            }
+
+                            if self.clipboardHistory.count > self.maxHistorySize {
+                                self.clipboardHistory.removeLast()
+                            }
+
+                            if StatusBarManager.shared.openWindowOnCopy {
+                                WindowManager.shared.openWindow()
+                            }
+                        } else {
+                            appLog("❌ Ukladanie obrázka zlyhalo", level: .error)
                         }
                     } else {
                         appLog("🔒 Obrázky nie sú povolené v bezplatnej verzii.", level: .warning)
@@ -247,5 +299,72 @@ class ClipboardManager: ObservableObject {
         clipboardCheckTimer?.invalidate()
         clipboardCheckTimer = nil
         appLog("🛑 Sledovanie systémovej schránky bolo zastavené", level: .info)
+    }
+}
+
+// MARK: - Typ reprezentujúci položku v schránke
+
+/// Položka v histórii schránky – text alebo obrázok (base64 alebo odkaz na súbor).
+enum ClipboardItem: Codable, Hashable {
+    case text(String)
+    case imageBase64(String)
+    case imageFile(String)
+
+    enum CodingKeys: String, CodingKey {
+        case type, value
+    }
+
+    enum ItemType: String, Codable {
+        case text, imageBase64, imageFile
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let type = try container.decode(ItemType.self, forKey: .type)
+
+        switch type {
+        case .text:
+            self = .text(try container.decode(String.self, forKey: .value))
+        case .imageBase64:
+            self = .imageBase64(try container.decode(String.self, forKey: .value))
+        case .imageFile:
+            self = .imageFile(try container.decode(String.self, forKey: .value))
+        }
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+
+        switch self {
+        case .text(let value):
+            try container.encode(ItemType.text, forKey: .type)
+            try container.encode(value, forKey: .value)
+        case .imageBase64(let value):
+            try container.encode(ItemType.imageBase64, forKey: .type)
+            try container.encode(value, forKey: .value)
+        case .imageFile(let value):
+            try container.encode(ItemType.imageFile, forKey: .type)
+            try container.encode(value, forKey: .value)
+        }
+    }
+
+    var isText: Bool {
+        if case .text = self { return true }
+        return false
+    }
+
+    var textValue: String? {
+        if case .text(let value) = self { return value }
+        return nil
+    }
+
+    var imageFileName: String? {
+        if case .imageFile(let name) = self { return name }
+        return nil
+    }
+
+    var imageBase64: String? {
+        if case .imageBase64(let base64) = self { return base64 }
+        return nil
     }
 }

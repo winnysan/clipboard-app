@@ -53,4 +53,13 @@ class ImageManager {
             return nil
         }
     }
+    
+    /// Vráti úplnú cestu k obrázku uloženému v adresári obrázkov, ak súbor existuje.
+    /// - Parameter name: Názov súboru obrázka (napr. „1234.png”).
+    /// - Returns: URL adresa obrázka, ak súbor existuje, inak `nil`.
+    func imageFileURL(for name: String) -> URL? {
+        let url = imageDirectoryURL.appendingPathComponent(name)
+        return FileManager.default.fileExists(atPath: url.path) ? url : nil
+    }
 }
+
