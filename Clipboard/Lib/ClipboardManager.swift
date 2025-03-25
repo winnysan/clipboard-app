@@ -71,11 +71,8 @@ class ClipboardManager: ObservableObject {
                 }
 
                 // Skontrolujeme, či už existuje v histórii a odstránime ho
-                self.clipboardHistory.removeAll {
-                    if case .text(let text) = $0 {
-                        return text == copiedText
-                    }
-                    return false
+                self.clipboardHistory.removeAll { item in
+                    item.type == .text && item.value == copiedText
                 }
 
                 // Pridáme ho na začiatok histórie
@@ -107,18 +104,13 @@ class ClipboardManager: ObservableObject {
          let pasteboard = NSPasteboard.general
  
         // Ak nie je zadaný text, použijeme prvý text z histórie.
-        let firstTextFromHistory = clipboardHistory.first {
-            if case .text = $0 { return true }
-            return false
-        }
+        let firstTextFromHistory = clipboardHistory.first(where: { $0.isText })
 
         let resolvedText: String?
         if let explicitText = text {
             resolvedText = explicitText
-        } else if case .text(let value) = firstTextFromHistory {
-            resolvedText = value
         } else {
-            resolvedText = nil
+            resolvedText = firstTextFromHistory?.textValue
         }
 
         guard let textToPaste = resolvedText else {
@@ -232,11 +224,8 @@ class ClipboardManager: ObservableObject {
                     }
 
                     appLog("📥 Zistená nová položka v schránke: \(newText)", level: .info)
-                    self.clipboardHistory.removeAll {
-                        if case .text(let value) = $0 {
-                            return value == newText
-                        }
-                        return false
+                    self.clipboardHistory.removeAll { item in
+                        item.type == .text && item.value == newText
                     }
                     self.clipboardHistory.insert(.text(newText), at: 0)
 
@@ -305,66 +294,110 @@ class ClipboardManager: ObservableObject {
 // MARK: - Typ reprezentujúci položku v schránke
 
 /// Položka v histórii schránky – text alebo obrázok (base64 alebo odkaz na súbor).
-enum ClipboardItem: Codable, Hashable {
-    case text(String)
-    case imageBase64(String)
-    case imageFile(String)
-
-    enum CodingKeys: String, CodingKey {
-        case type, value
-    }
-
+struct ClipboardItem: Codable, Hashable {
     enum ItemType: String, Codable {
         case text, imageBase64, imageFile
     }
 
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        let type = try container.decode(ItemType.self, forKey: .type)
+    let type: ItemType
+    let value: String
+    let timestamp: Date
 
-        switch type {
-        case .text:
-            self = .text(try container.decode(String.self, forKey: .value))
-        case .imageBase64:
-            self = .imageBase64(try container.decode(String.self, forKey: .value))
-        case .imageFile:
-            self = .imageFile(try container.decode(String.self, forKey: .value))
-        }
+    init(type: ItemType, value: String, timestamp: Date = Date()) {
+        self.type = type
+        self.value = value
+        self.timestamp = timestamp
     }
 
-    func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-
-        switch self {
-        case .text(let value):
-            try container.encode(ItemType.text, forKey: .type)
-            try container.encode(value, forKey: .value)
-        case .imageBase64(let value):
-            try container.encode(ItemType.imageBase64, forKey: .type)
-            try container.encode(value, forKey: .value)
-        case .imageFile(let value):
-            try container.encode(ItemType.imageFile, forKey: .type)
-            try container.encode(value, forKey: .value)
-        }
+    // Pôvodné enum príklady nahradíme statickými továrenskými metódami:
+    static func text(_ value: String) -> ClipboardItem {
+        ClipboardItem(type: .text, value: value)
     }
 
-    var isText: Bool {
-        if case .text = self { return true }
-        return false
+    static func imageBase64(_ base64: String) -> ClipboardItem {
+        ClipboardItem(type: .imageBase64, value: base64)
     }
+
+    static func imageFile(_ fileName: String) -> ClipboardItem {
+        ClipboardItem(type: .imageFile, value: fileName)
+    }
+
+    var isText: Bool { type == .text }
 
     var textValue: String? {
-        if case .text(let value) = self { return value }
-        return nil
+        type == .text ? value : nil
     }
 
     var imageFileName: String? {
-        if case .imageFile(let name) = self { return name }
-        return nil
+        type == .imageFile ? value : nil
     }
 
     var imageBase64: String? {
-        if case .imageBase64(let base64) = self { return base64 }
-        return nil
+        type == .imageBase64 ? value : nil
     }
 }
+
+
+//enum ClipboardItem: Codable, Hashable {
+//    case text(String)
+//    case imageBase64(String)
+//    case imageFile(String)
+//
+//    enum CodingKeys: String, CodingKey {
+//        case type, value
+//    }
+//
+//    enum ItemType: String, Codable {
+//        case text, imageBase64, imageFile
+//    }
+//
+//    init(from decoder: Decoder) throws {
+//        let container = try decoder.container(keyedBy: CodingKeys.self)
+//        let type = try container.decode(ItemType.self, forKey: .type)
+//
+//        switch type {
+//        case .text:
+//            self = .text(try container.decode(String.self, forKey: .value))
+//        case .imageBase64:
+//            self = .imageBase64(try container.decode(String.self, forKey: .value))
+//        case .imageFile:
+//            self = .imageFile(try container.decode(String.self, forKey: .value))
+//        }
+//    }
+//
+//    func encode(to encoder: Encoder) throws {
+//        var container = encoder.container(keyedBy: CodingKeys.self)
+//
+//        switch self {
+//        case .text(let value):
+//            try container.encode(ItemType.text, forKey: .type)
+//            try container.encode(value, forKey: .value)
+//        case .imageBase64(let value):
+//            try container.encode(ItemType.imageBase64, forKey: .type)
+//            try container.encode(value, forKey: .value)
+//        case .imageFile(let value):
+//            try container.encode(ItemType.imageFile, forKey: .type)
+//            try container.encode(value, forKey: .value)
+//        }
+//    }
+//
+//    var isText: Bool {
+//        if case .text = self { return true }
+//        return false
+//    }
+//
+//    var textValue: String? {
+//        if case .text(let value) = self { return value }
+//        return nil
+//    }
+//
+//    var imageFileName: String? {
+//        if case .imageFile(let name) = self { return name }
+//        return nil
+//    }
+//
+//    var imageBase64: String? {
+//        if case .imageBase64(let base64) = self { return base64 }
+//        return nil
+//    }
+//}

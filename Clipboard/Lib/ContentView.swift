@@ -55,69 +55,77 @@ struct ContentView: View {
                         ForEach(clipboardManager.clipboardHistory, id: \.self) { item in
                             let isHovered = hoveredItem == item
                             
-                            HStack(alignment: .top) {
-                                Button(action: {
-                                    clipboardManager.pasteText(item.textValue)
-                                }) {
-                                    HStack {
-                                        // Zobrazenie textu alebo typ položky
-                                        if let text = item.textValue {
-                                            Text(text)
-                                                .padding()
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(item.timestamp.formatted(date: .abbreviated, time: .shortened))
+                                    .font(.caption2)
+                                    .foregroundColor(.gray)
+                                    .padding(.leading, 4)
+                                
+                                HStack(alignment: .top) {
+                                    Button(action: {
+                                        clipboardManager.pasteText(item.textValue)
+                                    }) {
+                                        HStack {
+                                            // Zobrazenie textu alebo typ položky
+                                            if let text = item.textValue {
+                                                Text(text)
+                                                    .padding(.vertical, 8)
+                                                    .padding(.horizontal, 12)
+                                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                                    .lineLimit(3)
+                                            } else if let imageName = item.imageFileName,
+                                                      let imageURL = ImageManager.shared.imageFileURL(for: imageName),
+                                                      let nsImage = NSImage(contentsOf: imageURL) {
+                                                
+                                                HStack {
+                                                    Image(nsImage: nsImage)
+                                                        .resizable()
+                                                        .aspectRatio(contentMode: .fit)
+                                                        .frame(maxHeight: 60) // výška obmedzená, šírka sa prispôsobí
+                                                        .cornerRadius(4)
+                                                        .overlay(
+                                                            RoundedRectangle(cornerRadius: 4)
+                                                                .stroke(Color.white.opacity(0.2), lineWidth: 1)
+                                                        )
+                                                        .shadow(color: .black.opacity(0.15), radius: 3, x: 0, y: 1)
+                                                }
                                                 .frame(maxWidth: .infinity, alignment: .leading)
-                                                .lineLimit(3)
-                                        } else if let imageName = item.imageFileName,
-                                            let imageURL = ImageManager.shared.imageFileURL(for: imageName),
-                                            let nsImage = NSImage(contentsOf: imageURL) {
-
-                                            HStack {
-                                                Image(nsImage: nsImage)
-                                                    .resizable()
-                                                    .aspectRatio(contentMode: .fit)
-                                                    .frame(maxHeight: 60) // výška obmedzená, šírka sa prispôsobí
-                                                    .cornerRadius(8)
-                                                    .overlay(
-                                                        RoundedRectangle(cornerRadius: 8)
-                                                            .stroke(Color.white.opacity(0.2), lineWidth: 1)
-                                                    )
-                                                    .shadow(color: .black.opacity(0.15), radius: 3, x: 0, y: 1)
+                                                .padding(12)
                                             }
-                                            .frame(maxWidth: .infinity, alignment: .leading)
-                                            .padding()
+                                            Spacer()
                                         }
-                                        Spacer()
-                                    }
-                                    .background(isHovered ? Color.white.opacity(0.25) : Color.white.opacity(0.15)) // Efekt hoveru
-                                    .cornerRadius(10)
-                                    .contentShape(Rectangle()) // Klikateľná celá plocha
-                                    .onHover { hovering in
-                                        withAnimation(.easeInOut(duration: 0.15)) {
-                                            hoveredItem = hovering ? item : nil
+                                        .background(isHovered ? Color.white.opacity(0.25) : Color.white.opacity(0.15)) // Efekt hoveru
+                                        .cornerRadius(10)
+                                        .contentShape(Rectangle()) // Klikateľná celá plocha
+                                        .onHover { hovering in
+                                            withAnimation(.easeInOut(duration: 0.15)) {
+                                                hoveredItem = hovering ? item : nil
+                                            }
                                         }
                                     }
-                                }
-                                .buttonStyle(.plain) // Odstránenie defaultného tlačidlového štýlu
-                                .id(item) // Unikátne ID pre skrolovanie
-
-                                /// VStack na umiestnenie tlačidiel mimo záznamu vpravo
-                                VStack(alignment: .trailing, spacing: 4) {
-                                    /// Tlačidlo na pripnutie položky
-                                    Button(action: {
-                                        clipboardManager.togglePin(item)
-                                    }) {
-                                        Image(systemName: clipboardManager.pinnedItems.contains(item) ? "pin.fill" : "pin")
+                                    .buttonStyle(.plain) // Odstránenie defaultného tlačidlového štýlu
+                                    .id(item) // Unikátne ID pre skrolovanie
+                                    
+                                    /// VStack na umiestnenie tlačidiel mimo záznamu vpravo
+                                    VStack(alignment: .trailing, spacing: 4) {
+                                        /// Tlačidlo na pripnutie položky
+                                        Button(action: {
+                                            clipboardManager.togglePin(item)
+                                        }) {
+                                            Image(systemName: clipboardManager.pinnedItems.contains(item) ? "pin.fill" : "pin")
+                                        }
+                                        .buttonStyle(.borderless) // Odstránenie rámu tlačidla
+                                        
+                                        /// Tlačidlo na odstránenie položky (Trash)
+                                        Button(action: {
+                                            clipboardManager.removeItem(item)
+                                        }) {
+                                            Image(systemName: "trash")
+                                        }
+                                        .buttonStyle(.borderless) // Odstránenie rámu tlačidla
                                     }
-                                    .buttonStyle(.borderless) // Odstránenie rámu tlačidla
-
-                                    /// Tlačidlo na odstránenie položky (Trash)
-                                    Button(action: {
-                                        clipboardManager.removeItem(item)
-                                    }) {
-                                        Image(systemName: "trash")
-                                    }
-                                    .buttonStyle(.borderless) // Odstránenie rámu tlačidla
+                                    .padding(.leading, 4) // Pridanie medzery pred VStack
                                 }
-                                .padding(.leading, 4) // Pridanie medzery pred VStack
                             }
                         }
                     }
