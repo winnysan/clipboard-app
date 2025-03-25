@@ -219,6 +219,22 @@ class ClipboardManager: ObservableObject {
                         WindowManager.shared.openWindow()
                     }
                 }
+                
+                // Detekcia obrázkov v schránke
+                else if let imageData = pasteboard.data(forType: .tiff) {
+                    let readableTypes = pasteboard.types?.map { $0.rawValue } ?? []
+                    appLog("🖼️ Schránka obsahuje obrázok. Dostupné typy:", level: .info)
+                    readableTypes.forEach { appLog("🔸 \($0)", level: .info) }
+
+                    if PurchaseManager.shared.isProUnlocked {
+                        if let filename = ImageManager.shared.saveImage(imageData) {
+                            appLog("✅ Obrázok uložený ako súbor: \(filename)", level: .info)
+                            // TODO: Pridaj do histórie ako image položku
+                        }
+                    } else {
+                        appLog("🔒 Obrázky nie sú povolené v bezplatnej verzii.", level: .warning)
+                    }
+                }
             }
         }
 
