@@ -1,5 +1,6 @@
 import Foundation
 import AppKit
+import CryptoKit
 
 /// Správca pre prácu s obrázkami.
 /// Zodpovedá za ukladanie, načítanie a mazanie obrázkov používaných v histórii.
@@ -60,6 +61,14 @@ class ImageManager {
     func imageFileURL(for name: String) -> URL? {
         let url = imageDirectoryURL.appendingPathComponent(name)
         return FileManager.default.fileExists(atPath: url.path) ? url : nil
+    }
+    
+    /// Vypočíta SHA256 hash z dát.
+    /// - Parameter data: Dáta obrázka.
+    /// - Returns: Hexadecimálny reťazec s hashom.
+    func hashImageData(_ data: Data) -> String {
+        let hash = SHA256.hash(data: data)
+        return hash.map { String(format: "%02hhx", $0) }.joined()
     }
 }
 

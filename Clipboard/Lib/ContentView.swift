@@ -63,7 +63,13 @@ struct ContentView: View {
                                 
                                 HStack(alignment: .top) {
                                     Button(action: {
-                                        clipboardManager.pasteText(item.textValue)
+                                        if let text = item.textValue {
+                                            clipboardManager.pasteText(text)
+                                        } else if let imageName = item.imageFileName {
+                                            clipboardManager.pasteImage(named: imageName)
+                                        } else {
+                                            appLog("⚠️ Neznámy typ položky na kliknutie", level: .warning)
+                                        }
                                     }) {
                                         HStack {
                                             // Zobrazenie textu alebo typ položky

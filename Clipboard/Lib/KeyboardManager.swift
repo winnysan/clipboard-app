@@ -43,7 +43,7 @@ class KeyboardManager {
             // Ak je stlačené Control + V, vloží posledný skopírovaný text
             if flags.contains(.maskControl) && keyCode == 9 { // 9 = V
                 appLog("📋 Stlačené: Control + V", level: .info)
-                ClipboardManager.shared.pasteText()
+                ClipboardManager.shared.paste()
                 return nil // Zablokuje pôvodnú akciu
             }
 

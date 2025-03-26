@@ -22,6 +22,9 @@ class ClipboardManager: ObservableObject {
     private var lastChangeCount: Int = NSPasteboard.general.changeCount
     private var lastWrittenText: String? = nil
     
+    /// Hash posledného vloženého obrázka (pre detekciu duplicitného vloženia)
+    private var lastWrittenImageHash: String?
+    
     /// Cesta k súboru, kde sa bude ukladať história
     private let historyFileURL: URL = {
         let directory = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
@@ -98,6 +101,23 @@ class ClipboardManager: ObservableObject {
         }
     }
     
+    /// Vloží prvú položku z histórie podľa jej typu (text alebo obrázok).
+    func paste() {
+        guard let firstItem = clipboardHistory.first else {
+            appLog("⚠️ História je prázdna – nič na vloženie.", level: .warning)
+            return
+        }
+
+        switch firstItem.type {
+        case .text:
+            pasteText(firstItem.value)
+        case .imageFile:
+            pasteImage(named: firstItem.value)
+        default:
+            appLog("⚠️ Nepodporovaný typ položky na vloženie: \(firstItem.type)", level: .warning)
+        }
+    }
+    
     /// Vloží zadaný text alebo najnovší text z histórie na miesto kurzora.
     /// - Parameter text: Voliteľný parameter. Ak nie je zadaný, použije sa posledný text z histórie.
     func pasteText(_ text: String? = nil) {
@@ -146,6 +166,53 @@ class ClipboardManager: ObservableObject {
         appLog("📋 Vložený text: \(textToPaste)", level: .info)
         
         // Ak je povolené "Zatvoriť okno pri vložení", zatvoríme ho
+        if StatusBarManager.shared.closeWindowOnPaste {
+            WindowManager.shared.closeWindow()
+        }
+    }
+    
+    /// Vloží obrázok (ak je povolená Pro verzia a položka je typu `imageFile`).
+    /// - Parameter imageFileName: názov obrázka zo schránky (napr. "XYZ123.png")
+    func pasteImage(named imageFileName: String) {
+        guard PurchaseManager.shared.isProUnlocked else {
+            appLog("🔒 Pokus o vloženie obrázka v bezplatnej verzii", level: .warning)
+            return
+        }
+
+        guard let imageURL = ImageManager.shared.imageFileURL(for: imageFileName),
+              let image = NSImage(contentsOf: imageURL),
+              let tiffData = image.tiffRepresentation else {
+            appLog("❌ Nepodarilo sa načítať obrázok na vloženie", level: .error)
+            return
+        }
+        
+        self.lastWrittenImageHash = ImageManager.shared.hashImageData(tiffData)
+
+        let pasteboard = NSPasteboard.general
+        pasteboard.clearContents()
+        pasteboard.writeObjects([image])
+
+        // Simulácia Cmd+V (vloženie)
+        let source = CGEventSource(stateID: .hidSystemState)
+        let cmdDown = CGEvent(keyboardEventSource: source, virtualKey: 0x37, keyDown: true)
+        let vDown   = CGEvent(keyboardEventSource: source, virtualKey: 0x09, keyDown: true)
+        let vUp     = CGEvent(keyboardEventSource: source, virtualKey: 0x09, keyDown: false)
+        let cmdUp   = CGEvent(keyboardEventSource: source, virtualKey: 0x37, keyDown: false)
+
+        cmdDown?.flags = .maskCommand
+        vDown?.flags = .maskCommand
+
+        WindowManager.shared.preserveFocusBeforeOpening()
+
+        cmdDown?.post(tap: .cghidEventTap)
+        vDown?.post(tap: .cghidEventTap)
+        vUp?.post(tap: .cghidEventTap)
+        cmdUp?.post(tap: .cghidEventTap)
+
+        WindowManager.shared.restorePreviousFocus()
+
+        appLog("🖼️ Vložený obrázok: \(imageFileName)", level: .info)
+
         if StatusBarManager.shared.closeWindowOnPaste {
             WindowManager.shared.closeWindow()
         }
@@ -216,6 +283,7 @@ class ClipboardManager: ObservableObject {
             if currentChangeCount != self.lastChangeCount {
                 self.lastChangeCount = currentChangeCount
 
+                // Text v schránke
                 if let newText = pasteboard.string(forType: .string), !newText.isEmpty {
                     if newText == self.lastWrittenText {
                         appLog("🔁 Preskočené: vložený text je náš vlastný", level: .debug)
@@ -242,19 +310,28 @@ class ClipboardManager: ObservableObject {
                     }
                 }
                 
-                // Detekcia obrázkov v schránke
+                // Obrázok v schránke
                 else if let imageData = pasteboard.data(forType: .tiff) {
                     let readableTypes = pasteboard.types?.map { $0.rawValue } ?? []
                     appLog("🖼️ Schránka obsahuje obrázok. Dostupné typy:", level: .info)
                     readableTypes.forEach { appLog("🔸 \($0)", level: .info) }
 
                     if PurchaseManager.shared.isProUnlocked {
+                        let newImageHash = ImageManager.shared.hashImageData(imageData)
+
+                        // Preskočenie, ak ide o náš vlastný obrázok
+                        if newImageHash == self.lastWrittenImageHash {
+                            appLog("🔁 Preskočené: vložený obrázok je náš vlastný (hash match)", level: .debug)
+                            self.lastWrittenImageHash = nil
+                            return
+                        }
+
                         if let filename = ImageManager.shared.saveImage(imageData) {
                             let item = ClipboardItem.imageFile(filename)
-
-                            // Zamedz duplicite
                             self.clipboardHistory.removeAll { $0 == item }
                             self.clipboardHistory.insert(item, at: 0)
+
+                            self.lastWrittenImageHash = newImageHash
 
                             appLog("💾 Obrázok pridaný do histórie: \(filename)", level: .info)
 
