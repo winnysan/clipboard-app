@@ -18,7 +18,7 @@ struct ContentView: View {
             HStack(spacing: 8) {
                 Text(LocalizedStringResource("clipboard_app_title"))
                     .font(.headline)
-                
+
                 if PurchaseManager.shared.isProUnlocked {
                     Text(LocalizedStringResource("pro"))
                         .font(.headline)
@@ -36,7 +36,7 @@ struct ContentView: View {
                         .foregroundColor(.red)
                         .multilineTextAlignment(.center)
                         .padding(.bottom, 4)
-                    
+
                     Button(action: {
                         permissionManager.openAccessibilitySettings()
                     }) {
@@ -54,13 +54,13 @@ struct ContentView: View {
                     VStack(spacing: 8) { // Menšie medzery medzi položkami
                         ForEach(clipboardManager.clipboardHistory, id: \.self) { item in
                             let isHovered = hoveredItem == item
-                            
+
                             VStack(alignment: .leading, spacing: 4) {
                                 Text(item.timestamp.formatted(date: .abbreviated, time: .shortened))
                                     .font(.caption2)
                                     .foregroundColor(.gray)
                                     .padding(.leading, 4)
-                                
+
                                 HStack(alignment: .top) {
                                     Button(action: {
                                         if let text = item.textValue {
@@ -81,8 +81,8 @@ struct ContentView: View {
                                                     .lineLimit(3)
                                             } else if let imageName = item.imageFileName,
                                                       let imageURL = ImageManager.shared.imageFileURL(for: imageName),
-                                                      let nsImage = NSImage(contentsOf: imageURL) {
-                                                
+                                                      let nsImage = NSImage(contentsOf: imageURL)
+                                            {
                                                 HStack {
                                                     Image(nsImage: nsImage)
                                                         .resizable()
@@ -111,7 +111,7 @@ struct ContentView: View {
                                     }
                                     .buttonStyle(.plain) // Odstránenie defaultného tlačidlového štýlu
                                     .id(item) // Unikátne ID pre skrolovanie
-                                    
+
                                     /// VStack na umiestnenie tlačidiel mimo záznamu vpravo
                                     VStack(alignment: .trailing, spacing: 4) {
                                         /// Tlačidlo na pripnutie položky
@@ -121,7 +121,7 @@ struct ContentView: View {
                                             Image(systemName: clipboardManager.pinnedItems.contains(item) ? "pin.fill" : "pin")
                                         }
                                         .buttonStyle(.borderless) // Odstránenie rámu tlačidla
-                                        
+
                                         /// Tlačidlo na odstránenie položky (Trash)
                                         Button(action: {
                                             clipboardManager.removeItem(item)

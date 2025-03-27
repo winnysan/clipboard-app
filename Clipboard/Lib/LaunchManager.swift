@@ -5,7 +5,7 @@ import ServiceManagement
 class LaunchManager {
     /// Singleton inštancia triedy.
     static let shared = LaunchManager()
-    
+
     /// Identifikátor aplikácie v `LaunchAgents`.
     private let helperBundleID = Bundle.main.bundleIdentifier!
 

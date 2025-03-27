@@ -13,7 +13,7 @@ class ClipboardManager: ObservableObject {
 
     /// História skopírovaných položiek (najnovší na začiatku)
     @Published var clipboardHistory: [ClipboardItem] = []
-    
+
     /// Pripnuté položky, ktoré sa uchovajú aj po reštarte aplikácie
     @Published var pinnedItems: Set<ClipboardItem> = []
 
@@ -21,14 +21,14 @@ class ClipboardManager: ObservableObject {
     private var clipboardCheckTimer: Timer?
     private var lastChangeCount: Int = NSPasteboard.general.changeCount
     private var lastWrittenText: String? = nil
-    
+
     /// Hash posledného vloženého obrázka (pre detekciu duplicitného vloženia)
     private var lastWrittenImageHash: String?
-    
+
     /// Cesta k súboru, kde sa bude ukladať história
     private let historyFileURL: URL = {
         let directory = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
-        
+
         // Vytvoríme vlastný priečinok pre aplikáciu
         let appDirectory = directory.appendingPathComponent("MyClipboardApp", isDirectory: true)
 
@@ -85,7 +85,7 @@ class ClipboardManager: ObservableObject {
                 if self.pinnedItems.contains(.text(copiedText)) {
                     self.saveHistory()
                 }
-                
+
                 // Zabezpečíme, že história nepresiahne maximálny limit
                 if self.clipboardHistory.count > self.maxHistorySize {
                     self.clipboardHistory.removeLast()
@@ -100,7 +100,7 @@ class ClipboardManager: ObservableObject {
             }
         }
     }
-    
+
     /// Vloží prvú položku z histórie podľa jej typu (text alebo obrázok).
     func paste() {
         guard let firstItem = clipboardHistory.first else {
@@ -117,12 +117,12 @@ class ClipboardManager: ObservableObject {
             appLog("⚠️ Nepodporovaný typ položky na vloženie: \(firstItem.type)", level: .warning)
         }
     }
-    
+
     /// Vloží zadaný text alebo najnovší text z histórie na miesto kurzora.
     /// - Parameter text: Voliteľný parameter. Ak nie je zadaný, použije sa posledný text z histórie.
     func pasteText(_ text: String? = nil) {
-         let pasteboard = NSPasteboard.general
- 
+        let pasteboard = NSPasteboard.general
+
         // Ak nie je zadaný text, použijeme prvý text z histórie.
         let firstTextFromHistory = clipboardHistory.first(where: { $0.isText })
 
@@ -151,7 +151,7 @@ class ClipboardManager: ObservableObject {
 
         cmdDown?.flags = .maskCommand
         vDown?.flags = .maskCommand
-        
+
         // Uchovanie pôvodného fokusu pred vložením textu.
         WindowManager.shared.preserveFocusBeforeOpening()
 
@@ -159,18 +159,18 @@ class ClipboardManager: ObservableObject {
         vDown?.post(tap: .cghidEventTap)
         vUp?.post(tap: .cghidEventTap)
         cmdUp?.post(tap: .cghidEventTap)
-        
+
         // Obnovenie pôvodného fokusu po vložení textu.
         WindowManager.shared.restorePreviousFocus()
 
         appLog("📋 Vložený text: \(textToPaste)", level: .info)
-        
+
         // Ak je povolené "Zatvoriť okno pri vložení", zatvoríme ho
         if StatusBarManager.shared.closeWindowOnPaste {
             WindowManager.shared.closeWindow()
         }
     }
-    
+
     /// Vloží obrázok (ak je povolená Pro verzia a položka je typu `imageFile`).
     /// - Parameter imageFileName: názov obrázka zo schránky (napr. "XYZ123.png")
     func pasteImage(named imageFileName: String) {
@@ -181,12 +181,13 @@ class ClipboardManager: ObservableObject {
 
         guard let imageURL = ImageManager.shared.imageFileURL(for: imageFileName),
               let image = NSImage(contentsOf: imageURL),
-              let tiffData = image.tiffRepresentation else {
+              let tiffData = image.tiffRepresentation
+        else {
             appLog("❌ Nepodarilo sa načítať obrázok na vloženie", level: .error)
             return
         }
-        
-        self.lastWrittenImageHash = ImageManager.shared.hashImageData(tiffData)
+
+        lastWrittenImageHash = ImageManager.shared.hashImageData(tiffData)
 
         let pasteboard = NSPasteboard.general
         pasteboard.clearContents()
@@ -195,9 +196,9 @@ class ClipboardManager: ObservableObject {
         // Simulácia Cmd+V (vloženie)
         let source = CGEventSource(stateID: .hidSystemState)
         let cmdDown = CGEvent(keyboardEventSource: source, virtualKey: 0x37, keyDown: true)
-        let vDown   = CGEvent(keyboardEventSource: source, virtualKey: 0x09, keyDown: true)
-        let vUp     = CGEvent(keyboardEventSource: source, virtualKey: 0x09, keyDown: false)
-        let cmdUp   = CGEvent(keyboardEventSource: source, virtualKey: 0x37, keyDown: false)
+        let vDown = CGEvent(keyboardEventSource: source, virtualKey: 0x09, keyDown: true)
+        let vUp = CGEvent(keyboardEventSource: source, virtualKey: 0x09, keyDown: false)
+        let cmdUp = CGEvent(keyboardEventSource: source, virtualKey: 0x37, keyDown: false)
 
         cmdDown?.flags = .maskCommand
         vDown?.flags = .maskCommand
@@ -217,7 +218,7 @@ class ClipboardManager: ObservableObject {
             WindowManager.shared.closeWindow()
         }
     }
-    
+
     /// Uloží **iba pripnuté položky** do JSON súboru
     private func saveHistory() {
         let encoder = JSONEncoder()
@@ -255,7 +256,7 @@ class ClipboardManager: ObservableObject {
             appLog("❌ Chyba pri načítaní histórie: \(error.localizedDescription)", level: .error)
         }
     }
-    
+
     /// Označí alebo odznačí text ako pripnutý
     func togglePin(_ item: ClipboardItem) {
         if pinnedItems.contains(item) {
@@ -266,14 +267,14 @@ class ClipboardManager: ObservableObject {
 
         saveHistory() // Uložíme nové pripnuté položky
     }
-    
+
     /// Odstráni položku zo zoznamu aj z pripnutých
     func removeItem(_ item: ClipboardItem) {
         clipboardHistory.removeAll { $0 == item } // Odstráni z histórie
-        pinnedItems.remove(item)                  // Odstráni z pripnutých
-        saveHistory()                             // Uložíme len pripnuté položky
+        pinnedItems.remove(item) // Odstráni z pripnutých
+        saveHistory() // Uložíme len pripnuté položky
     }
-    
+
     /// Spustí sledovanie zmien v systémovej schránke
     func startMonitoringClipboard() {
         clipboardCheckTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { _ in
@@ -309,7 +310,7 @@ class ClipboardManager: ObservableObject {
                         WindowManager.shared.openWindow()
                     }
                 }
-                
+
                 // Obrázok v schránke
                 else if let imageData = pasteboard.data(forType: .tiff) {
                     let readableTypes = pasteboard.types?.map { $0.rawValue } ?? []
@@ -359,7 +360,7 @@ class ClipboardManager: ObservableObject {
         RunLoop.main.add(clipboardCheckTimer!, forMode: .common)
         appLog("🔄 Spustené sledovanie systémovej schránky", level: .info)
     }
-    
+
     /// Zastaví sledovanie zmien v systémovej schránke.
     func stopMonitoringClipboard() {
         clipboardCheckTimer?.invalidate()
@@ -414,8 +415,7 @@ struct ClipboardItem: Codable, Hashable {
     }
 }
 
-
-//enum ClipboardItem: Codable, Hashable {
+// enum ClipboardItem: Codable, Hashable {
 //    case text(String)
 //    case imageBase64(String)
 //    case imageFile(String)
@@ -477,4 +477,4 @@ struct ClipboardItem: Codable, Hashable {
 //        if case .imageBase64(let base64) = self { return base64 }
 //        return nil
 //    }
-//}
+// }

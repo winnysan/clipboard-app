@@ -6,7 +6,7 @@ class KeyboardManager {
     /// Mach port na zachytávanie globálnych klávesových vstupov
     private var eventTap: CFMachPort?
     private var runLoopSource: CFRunLoopSource?
-    
+
     /// Inicializácia sledovania klávesových vstupov
     init() {
         setupEventTap()
@@ -21,41 +21,41 @@ class KeyboardManager {
                                      options: .defaultTap,
                                      eventsOfInterest: mask,
                                      callback: { _, type, event, _ -> Unmanaged<CGEvent>? in
-            guard type == .keyDown else { return Unmanaged.passRetained(event) }
+                                         guard type == .keyDown else { return Unmanaged.passRetained(event) }
 
-            let keyCode = event.getIntegerValueField(.keyboardEventKeycode)
-            let flags = event.flags
+                                         let keyCode = event.getIntegerValueField(.keyboardEventKeycode)
+                                         let flags = event.flags
 
-            // Ak je stlačené Control + C, skopíruje označený text
-            if flags.contains(.maskControl) && keyCode == 8 { // 8 = C
-                appLog("📝 Stlačené: Control + C", level: .info)
-                ClipboardManager.shared.copySelectedText()                
-                return nil // Zablokuje pôvodnú akciu
-            }
-            
-            // Ak je stlačené Control + X, vykoná vystrihnutie
-            if flags.contains(.maskControl) && keyCode == 7 { // 7 = X
-                appLog("✂️ Stlačené: Control + X", level: .info)
-                ClipboardManager.shared.copySelectedText(cut: true)
-                return nil // Zablokuje pôvodnú akciu
-            }
-            
-            // Ak je stlačené Control + V, vloží posledný skopírovaný text
-            if flags.contains(.maskControl) && keyCode == 9 { // 9 = V
-                appLog("📋 Stlačené: Control + V", level: .info)
-                ClipboardManager.shared.paste()
-                return nil // Zablokuje pôvodnú akciu
-            }
+                                         // Ak je stlačené Control + C, skopíruje označený text
+                                         if flags.contains(.maskControl), keyCode == 8 { // 8 = C
+                                             appLog("📝 Stlačené: Control + C", level: .info)
+                                             ClipboardManager.shared.copySelectedText()
+                                             return nil // Zablokuje pôvodnú akciu
+                                         }
 
-            // Ak je stlačené Option + V, otvorí alebo zatvorí okno aplikácie
-            if flags.contains(.maskAlternate) && keyCode == 9 { // 9 = V
-                appLog("📜 Stlačené: Option + V", level: .info)
-                WindowManager.shared.toggleWindow()
-                return nil // Zablokuje pôvodnú akciu
-            }
+                                         // Ak je stlačené Control + X, vykoná vystrihnutie
+                                         if flags.contains(.maskControl), keyCode == 7 { // 7 = X
+                                             appLog("✂️ Stlačené: Control + X", level: .info)
+                                             ClipboardManager.shared.copySelectedText(cut: true)
+                                             return nil // Zablokuje pôvodnú akciu
+                                         }
 
-            return Unmanaged.passRetained(event)
-        }, userInfo: nil)
+                                         // Ak je stlačené Control + V, vloží posledný skopírovaný text
+                                         if flags.contains(.maskControl), keyCode == 9 { // 9 = V
+                                             appLog("📋 Stlačené: Control + V", level: .info)
+                                             ClipboardManager.shared.paste()
+                                             return nil // Zablokuje pôvodnú akciu
+                                         }
+
+                                         // Ak je stlačené Option + V, otvorí alebo zatvorí okno aplikácie
+                                         if flags.contains(.maskAlternate), keyCode == 9 { // 9 = V
+                                             appLog("📜 Stlačené: Option + V", level: .info)
+                                             WindowManager.shared.toggleWindow()
+                                             return nil // Zablokuje pôvodnú akciu
+                                         }
+
+                                         return Unmanaged.passRetained(event)
+                                     }, userInfo: nil)
 
         // Overenie, či sa podarilo vytvoriť Event Tap
         if let eventTap = eventTap {
@@ -87,26 +87,26 @@ class KeyboardManager {
     func destroyEventTap() {
         if let eventTap = eventTap {
             CGEvent.tapEnable(tap: eventTap, enable: false)
-            
+
             if let runLoopSource = runLoopSource {
                 CFRunLoopRemoveSource(CFRunLoopGetCurrent(), runLoopSource, .commonModes)
             }
 
             CFMachPortInvalidate(eventTap) // ✅ Správne invalidovanie Event Tap
             self.eventTap = nil
-            self.runLoopSource = nil
-            
+            runLoopSource = nil
+
             appLog("🔻 Event Tap bol úplne odstránený.", level: .info)
         }
     }
-    
+
     /// Simuluje stlačenie klávesovej skratky Cmd + C (kopírovanie).
     static func simulateCmdC() {
         let source = CGEventSource(stateID: .hidSystemState)
         let cmdDown = CGEvent(keyboardEventSource: source, virtualKey: 0x37, keyDown: true)
-        let cDown   = CGEvent(keyboardEventSource: source, virtualKey: 0x08, keyDown: true)
-        let cUp     = CGEvent(keyboardEventSource: source, virtualKey: 0x08, keyDown: false)
-        let cmdUp   = CGEvent(keyboardEventSource: source, virtualKey: 0x37, keyDown: false)
+        let cDown = CGEvent(keyboardEventSource: source, virtualKey: 0x08, keyDown: true)
+        let cUp = CGEvent(keyboardEventSource: source, virtualKey: 0x08, keyDown: false)
+        let cmdUp = CGEvent(keyboardEventSource: source, virtualKey: 0x37, keyDown: false)
 
         cmdDown?.flags = .maskCommand
         cDown?.flags = .maskCommand
@@ -119,14 +119,13 @@ class KeyboardManager {
         appLog("⌨️ Simulovaný Cmd + C", level: .debug)
     }
 
-
     /// Simuluje stlačenie klávesovej skratky Cmd + X (vystrihnutie).
     static func simulateCmdX() {
         let source = CGEventSource(stateID: .hidSystemState)
         let cmdDown = CGEvent(keyboardEventSource: source, virtualKey: 0x37, keyDown: true)
-        let xDown   = CGEvent(keyboardEventSource: source, virtualKey: 0x07, keyDown: true)
-        let xUp     = CGEvent(keyboardEventSource: source, virtualKey: 0x07, keyDown: false)
-        let cmdUp   = CGEvent(keyboardEventSource: source, virtualKey: 0x37, keyDown: false)
+        let xDown = CGEvent(keyboardEventSource: source, virtualKey: 0x07, keyDown: true)
+        let xUp = CGEvent(keyboardEventSource: source, virtualKey: 0x07, keyDown: false)
+        let cmdUp = CGEvent(keyboardEventSource: source, virtualKey: 0x37, keyDown: false)
 
         cmdDown?.flags = .maskCommand
         xDown?.flags = .maskCommand

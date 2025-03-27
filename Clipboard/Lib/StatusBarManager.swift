@@ -5,7 +5,7 @@ import AppKit
 class StatusBarManager {
     /// Singleton inštancia pre správu stavovej lišty.
     static let shared = StatusBarManager()
-    
+
     /// Referencia na položku stavovej lišty.
     private var statusItem: NSStatusItem?
 
@@ -14,10 +14,10 @@ class StatusBarManager {
 
     /// Kľúč pre nastavenie "Otvoriť okno pri kopírovaní"
     private let openWindowOnCopyKey = "openWindowOnCopy"
-    
+
     /// Kľúč pre nastavenie "Zatvoriť okno pri vložení".
     private let closeWindowOnPasteKey = "closeWindowOnPaste"
-    
+
     /// Kľúč pre nastavenie "Sledovanie systémovej schránky".
     private let monitorClipboardKey = "monitorClipboard"
 
@@ -26,25 +26,25 @@ class StatusBarManager {
         get { defaults.bool(forKey: openWindowOnCopyKey) }
         set { defaults.set(newValue, forKey: openWindowOnCopyKey) }
     }
-    
+
     /// Hodnota pre "Zatvoriť okno pri vložení".
     var closeWindowOnPaste: Bool {
         get { defaults.bool(forKey: closeWindowOnPasteKey) }
         set { defaults.set(newValue, forKey: closeWindowOnPasteKey) }
     }
-    
+
     /// Hodnota pre "Sledovanie systémovej schránky".
     var monitorClipboard: Bool {
         get { defaults.bool(forKey: monitorClipboardKey) }
         set { defaults.set(newValue, forKey: monitorClipboardKey) }
     }
-     
+
     /// Registrovanie predvolených hodnôt pri prvom spustení aplikácie.
     func registerDefaultPreferences() {
         let defaultValues: [String: Any] = [
-            openWindowOnCopyKey: false,  // Predvolene vypnuté
+            openWindowOnCopyKey: false, // Predvolene vypnuté
             closeWindowOnPasteKey: true, // Predvolene zapnuté
-            monitorClipboardKey: true // Predvolene zapnuté
+            monitorClipboardKey: true, // Predvolene zapnuté
         ]
         defaults.register(defaults: defaultValues)
     }
@@ -55,14 +55,14 @@ class StatusBarManager {
     /// Inicializuje ikonku v stavovej lište a nastaví akcie.
     func setupStatusBar() {
         registerDefaultPreferences() // Zavolanie metódy na registráciu predvolených hodnôt
-        
+
         // Spustí sledovanie po štarte
         if monitorClipboard {
             ClipboardManager.shared.startMonitoringClipboard()
         }
-        
+
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
-        
+
         if let button = statusItem?.button {
             button.image = NSImage(systemSymbolName: "clipboard", accessibilityDescription: "Clipboard")
             button.action = #selector(statusBarButtonClicked)
@@ -78,7 +78,7 @@ class StatusBarManager {
     }
 
     /// Akcia pri kliknutí na ikonku stavovej lišty - zobrazí alebo skryje okno aplikácie.
-    @objc private func statusBarButtonClicked(_ sender: NSStatusBarButton) {
+    @objc private func statusBarButtonClicked(_: NSStatusBarButton) {
         let event = NSApp.currentEvent
 
         if event?.type == .rightMouseUp {
@@ -91,7 +91,7 @@ class StatusBarManager {
     /// Zobrazí kontextové menu pri kliknutí pravým tlačidlom na ikonku stavovej lišty.
     private func showContextMenu() {
         let menu = NSMenu()
-        
+
         // Položka "O aplikácii"
         let aboutItem = NSMenuItem(
             title: NSLocalizedString("about_app", comment: "O aplikácii"),
@@ -99,7 +99,7 @@ class StatusBarManager {
             keyEquivalent: ""
         )
         aboutItem.target = self
-        
+
         // Položka "Sledovať systémovú schránku"
         let monitorClipboardItem = NSMenuItem(
             title: NSLocalizedString("monitor_clipboard", comment: "Sledovať systémovú schránku"),
@@ -108,7 +108,7 @@ class StatusBarManager {
         )
         monitorClipboardItem.target = self
         monitorClipboardItem.state = monitorClipboard ? .on : .off
-        
+
         // Položka "Otvoriť okno pri kopírovaní"
         let openWindowItem = NSMenuItem(
             title: NSLocalizedString("open_window_on_copy", comment: "Otvoriť okno pri kopírovaní"),
@@ -117,7 +117,7 @@ class StatusBarManager {
         )
         openWindowItem.target = self
         openWindowItem.state = openWindowOnCopy ? .on : .off
-        
+
         // Položka "Zatvoriť okno pri vložení"
         let closeWindowItem = NSMenuItem(
             title: NSLocalizedString("close_window_on_paste", comment: "Zatvoriť okno pri vložení"),
@@ -152,12 +152,12 @@ class StatusBarManager {
         )
         quitItem.target = self
         menu.addItem(quitItem)
-        
+
         statusItem?.menu = menu
         statusItem?.button?.performClick(nil) // Simuluje kliknutie na ikonu pre zobrazenie menu
         statusItem?.menu = nil // Po kliknutí na položku menu resetuje menu, aby neboli vizuálne chyby
     }
-    
+
     /// Zapne alebo vypne možnosť sledovania systémovej schránky.
     @objc private func toggleMonitorClipboard() {
         monitorClipboard.toggle()
@@ -177,30 +177,30 @@ class StatusBarManager {
         openWindowOnCopy.toggle()
         appLog("🔄 Otvoriť okno pri kopírovaní: \(openWindowOnCopy ? "Zapnuté" : "Vypnuté")", level: .info)
     }
-    
+
     /// Prepne stav "Zatvoriť okno pri vložení".
     @objc private func toggleCloseWindowOnPaste() {
         closeWindowOnPaste.toggle()
         appLog("🔄 Zatvoriť okno pri vložení: \(closeWindowOnPaste ? "Zapnuté" : "Vypnuté")", level: .info)
     }
-    
+
     /// Prepne stav automatického spúšťania aplikácie pri štarte systému.
     @objc private func toggleLaunchAtStartup() {
         let isEnabled = LaunchManager.shared.isLaunchAtStartupEnabled()
         LaunchManager.shared.setLaunchAtStartup(!isEnabled)
     }
-    
+
     /// Ukončí aplikáciu.
     @objc private func quitApp() {
         appLog("🚪 Aplikácia bola ukončená.", level: .info)
         NSApp.terminate(nil)
     }
-    
+
     /// Zobrazí okno "O aplikácii"
     @objc private func showAboutWindow() {
         let appVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "Unknown"
         let informativeText = String(format: NSLocalizedString("informative_text", comment: "Informácie o aplikácii"), appVersion)
-        
+
         let alert = NSAlert()
         alert.messageText = NSLocalizedString("clipboard_app_title", comment: "Nadpis aplikácie")
         alert.informativeText = informativeText

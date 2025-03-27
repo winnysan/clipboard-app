@@ -1,6 +1,6 @@
-import Foundation
 import AppKit
 import CryptoKit
+import Foundation
 
 /// Správca pre prácu s obrázkami.
 /// Zodpovedá za ukladanie, načítanie a mazanie obrázkov používaných v histórii.
@@ -14,7 +14,7 @@ class ImageManager {
     /// Privátny inicializátor – nastaví cestu k adresáru.
     private init() {
         let baseDirectory = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
-        self.imageDirectoryURL = baseDirectory.appendingPathComponent("Clipboard/images", isDirectory: true)
+        imageDirectoryURL = baseDirectory.appendingPathComponent("Clipboard/images", isDirectory: true)
 
         // Výpis cesty pri inicializácii
         appLog("📂 Adresár pre obrázky: \(imageDirectoryURL.path)", level: .info)
@@ -28,13 +28,14 @@ class ImageManager {
             }
         }
     }
-    
+
     /// Uloží obrázok (ako PNG) na disk a vráti názov súboru.
     /// - Parameter data: Dáta obrázka (napr. TIFF z NSPasteboard).
     /// - Returns: Názov súboru (napr. `ABCD1234.png`) alebo `nil` pri chybe.
     func saveImage(_ data: Data) -> String? {
         guard let imageRep = NSBitmapImageRep(data: data),
-              let pngData = imageRep.representation(using: .png, properties: [:]) else {
+              let pngData = imageRep.representation(using: .png, properties: [:])
+        else {
             appLog("❌ Obrázok sa nepodarilo konvertovať na PNG.", level: .error)
             return nil
         }
@@ -54,7 +55,7 @@ class ImageManager {
             return nil
         }
     }
-    
+
     /// Vráti úplnú cestu k obrázku uloženému v adresári obrázkov, ak súbor existuje.
     /// - Parameter name: Názov súboru obrázka (napr. „1234.png”).
     /// - Returns: URL adresa obrázka, ak súbor existuje, inak `nil`.
@@ -62,7 +63,7 @@ class ImageManager {
         let url = imageDirectoryURL.appendingPathComponent(name)
         return FileManager.default.fileExists(atPath: url.path) ? url : nil
     }
-    
+
     /// Vypočíta SHA256 hash z dát.
     /// - Parameter data: Dáta obrázka.
     /// - Returns: Hexadecimálny reťazec s hashom.
@@ -71,4 +72,3 @@ class ImageManager {
         return hash.map { String(format: "%02hhx", $0) }.joined()
     }
 }
-

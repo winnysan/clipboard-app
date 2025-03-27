@@ -6,12 +6,12 @@ class CustomWindow: NSWindow {
     override var canBecomeKey: Bool {
         return false
     }
-    
+
     /// Umožňuje, aby sa okno stalo hlavné (`main window`).
     override var canBecomeMain: Bool {
         return false
     }
-    
+
     /// Zobrazenie okna bez jeho aktivácie ako hlavného.
     /// - Parameter sender: Objekt, ktorý volá túto metódu.
     override func makeKeyAndOrderFront(_ sender: Any?) {

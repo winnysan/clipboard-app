@@ -1,5 +1,5 @@
-import SwiftUI
 import Cocoa
+import SwiftUI
 
 /// Hlavná aplikácia,
 @main

@@ -16,13 +16,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     /// Volá sa pri spustení aplikácie a inicializuje potrebné služby.
     /// - Parameter aNotification: Systémová notifikácia pri štarte aplikácie.
-    func applicationDidFinishLaunching(_ aNotification: Notification) {
+    func applicationDidFinishLaunching(_: Notification) {
         // Inicializácia a konfigurácia hlavného okna aplikácie.
         WindowManager.shared.configureWindow()
-        
+
         // Inicializácia stavovej lišty.
         StatusBarManager.shared.setupStatusBar()
-        
+
         appLog("✅ Aplikácia spustená na pozadí.", level: .info)
 
         // Automaticky požiada používateľa o povolenie spustenia pri štarte, ak nie je nastavené.
@@ -30,7 +30,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         // Požiadavka na oprávnenia pre Accessibility API
         systemPermissionManager.requestAccessibilityPermission()
-        
+
         // Spustíme sledovanie oprávnení a zabezpečíme, že klávesové skratky sa aktivujú po ich udelení
         systemPermissionManager.startMonitoringPermission()
 
@@ -51,7 +51,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     /// Volá sa pri ukončení aplikácie a uvoľňuje zdroje.
     /// - Parameter aNotification: Systémová notifikácia pri ukončení aplikácie.
-    func applicationWillTerminate(_ aNotification: Notification) {
+    func applicationWillTerminate(_: Notification) {
         keyboardManager = nil
         systemPermissionManager.stopMonitoringPermission() // Ukončí sledovanie oprávnení
         ClipboardManager.shared.stopMonitoringClipboard()

@@ -5,10 +5,10 @@ import Combine
 /// Obsahuje funkcie na kontrolu oprávnení a aktualizáciu ikonky stavovej lišty.
 class SystemPermissionManager: ObservableObject {
     static let shared = SystemPermissionManager()
-    
+
     /// Oznamuje UI, či má aplikácia povolenie na ovládanie klávesnice.
     @Published var hasPermission: Bool = AXIsProcessTrusted()
-    
+
     private var permissionCheckTimer: AnyCancellable?
     private var lastPermissionState: Bool = AXIsProcessTrusted() // Ukladá posledný stav oprávnenia
     private var keyboardManager: KeyboardManager?
@@ -37,7 +37,7 @@ class SystemPermissionManager: ObservableObject {
                 }
             }
     }
-    
+
     /// Spustí sledovanie klávesových skratiek.
     private func startKeyboardMonitoring() {
         if keyboardManager == nil {
