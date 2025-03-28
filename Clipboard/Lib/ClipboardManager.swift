@@ -271,10 +271,16 @@ class ClipboardManager: ObservableObject {
         saveHistory() // Uložíme nové pripnuté položky
     }
 
-    /// Odstráni položku zo zoznamu aj z pripnutých
+    /// Odstráni položku zo zoznamu aj z pripnutých. Ak ide o obrázok, zmaže aj súbor.
     func removeItem(_ item: ClipboardItem) {
         clipboardHistory.removeAll { $0 == item } // Odstráni z histórie
         pinnedItems.remove(item) // Odstráni z pripnutých
+
+        // Ak ide o obrázok typu imageFile, zmaž ho aj z disku
+        if item.type == .imageFile, let fileName = item.imageFileName {
+            ImageManager.shared.deleteImageFile(named: fileName)
+        }
+
         saveHistory() // Uložíme len pripnuté položky
     }
 

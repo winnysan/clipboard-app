@@ -98,4 +98,20 @@ class ImageManager {
             appLog("❌ Chyba pri čistení obrázkov: \(error.localizedDescription)", level: .error)
         }
     }
+
+    /// Vymaže obrázok zo súborového systému podľa názvu súboru.
+    /// - Parameter fileName: Názov súboru (napr. "XYZ123.png")
+    func deleteImageFile(named fileName: String) {
+        guard let fileURL = imageFileURL(for: fileName) else {
+            appLog("⚠️ Súbor neexistuje alebo cesta je neplatná: \(fileName)", level: .warning)
+            return
+        }
+
+        do {
+            try FileManager.default.removeItem(at: fileURL)
+            appLog("🗑️ Obrázok vymazaný zo súboru: \(fileName)", level: .info)
+        } catch {
+            appLog("❌ Nepodarilo sa vymazať obrázok: \(error.localizedDescription)", level: .error)
+        }
+    }
 }
