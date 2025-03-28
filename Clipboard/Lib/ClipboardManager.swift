@@ -51,6 +51,9 @@ class ClipboardManager: ObservableObject {
     /// Privátny inicializátor zabraňujúci vytvoreniu ďalších inštancií.
     private init() {
         loadHistory()
+
+        // Vymaže všetky obrázkové súbory, ktoré sa nenachádzajú v pripnutých položkách
+        ImageManager.shared.cleanupUnusedImages(history: clipboardHistory, pinnedItems: pinnedItems)
     }
 
     /// Skopíruje alebo vystrihne označený text zo systému, uloží ho do histórie a zobrazí okno aplikácie.
@@ -414,67 +417,3 @@ struct ClipboardItem: Codable, Hashable {
         type == .imageBase64 ? value : nil
     }
 }
-
-// enum ClipboardItem: Codable, Hashable {
-//    case text(String)
-//    case imageBase64(String)
-//    case imageFile(String)
-//
-//    enum CodingKeys: String, CodingKey {
-//        case type, value
-//    }
-//
-//    enum ItemType: String, Codable {
-//        case text, imageBase64, imageFile
-//    }
-//
-//    init(from decoder: Decoder) throws {
-//        let container = try decoder.container(keyedBy: CodingKeys.self)
-//        let type = try container.decode(ItemType.self, forKey: .type)
-//
-//        switch type {
-//        case .text:
-//            self = .text(try container.decode(String.self, forKey: .value))
-//        case .imageBase64:
-//            self = .imageBase64(try container.decode(String.self, forKey: .value))
-//        case .imageFile:
-//            self = .imageFile(try container.decode(String.self, forKey: .value))
-//        }
-//    }
-//
-//    func encode(to encoder: Encoder) throws {
-//        var container = encoder.container(keyedBy: CodingKeys.self)
-//
-//        switch self {
-//        case .text(let value):
-//            try container.encode(ItemType.text, forKey: .type)
-//            try container.encode(value, forKey: .value)
-//        case .imageBase64(let value):
-//            try container.encode(ItemType.imageBase64, forKey: .type)
-//            try container.encode(value, forKey: .value)
-//        case .imageFile(let value):
-//            try container.encode(ItemType.imageFile, forKey: .type)
-//            try container.encode(value, forKey: .value)
-//        }
-//    }
-//
-//    var isText: Bool {
-//        if case .text = self { return true }
-//        return false
-//    }
-//
-//    var textValue: String? {
-//        if case .text(let value) = self { return value }
-//        return nil
-//    }
-//
-//    var imageFileName: String? {
-//        if case .imageFile(let name) = self { return name }
-//        return nil
-//    }
-//
-//    var imageBase64: String? {
-//        if case .imageBase64(let base64) = self { return base64 }
-//        return nil
-//    }
-// }

@@ -55,6 +55,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         keyboardManager = nil
         systemPermissionManager.stopMonitoringPermission() // Ukončí sledovanie oprávnení
         ClipboardManager.shared.stopMonitoringClipboard()
+        // Vyčistenie obrázkov pred ukončením aplikácie
+        ImageManager.shared.cleanupUnusedImages(history: ClipboardManager.shared.clipboardHistory, pinnedItems: ClipboardManager.shared.pinnedItems)
         appLog("🚪 Aplikácia bola ukončená.", level: .info)
     }
 }

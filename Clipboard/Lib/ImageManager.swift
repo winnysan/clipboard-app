@@ -71,4 +71,31 @@ class ImageManager {
         let hash = SHA256.hash(data: data)
         return hash.map { String(format: "%02hhx", $0) }.joined()
     }
+
+    /// Vymaže všetky súbory, ktoré nie sú v histórii ani medzi pripnutými položkami.
+    /// - Parameters:
+    ///   - history: Všetky položky histórie.
+    ///   - pinnedItems: Pripnuté položky (ostávajú zachované).
+    func cleanupUnusedImages(history: [ClipboardItem], pinnedItems: Set<ClipboardItem>) {
+        let relevantNames = Set(
+            history.filter { item in
+                item.type != .imageFile || pinnedItems.contains(item)
+            }.compactMap { $0.imageFileName } +
+                pinnedItems.compactMap { $0.imageFileName }
+        )
+
+        do {
+            let fileURLs = try FileManager.default.contentsOfDirectory(at: imageDirectoryURL, includingPropertiesForKeys: nil)
+
+            for url in fileURLs {
+                let fileName = url.lastPathComponent
+                if !relevantNames.contains(fileName) {
+                    try FileManager.default.removeItem(at: url)
+                    appLog("🧹 Vymazaný nepoužívaný obrázok: \(fileName)", level: .info)
+                }
+            }
+        } catch {
+            appLog("❌ Chyba pri čistení obrázkov: \(error.localizedDescription)", level: .error)
+        }
+    }
 }
