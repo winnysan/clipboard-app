@@ -25,7 +25,8 @@ struct PurchaseView: View {
             .cornerRadius(12)
 
             Button(action: {
-                //
+                PurchaseManager.shared.simulatePurchase()
+                onClose()
             }) {
                 Text(LocalizedStringResource("upgrade-to-pro"))
                     .font(.headline)

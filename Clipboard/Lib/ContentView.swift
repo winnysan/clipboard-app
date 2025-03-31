@@ -9,6 +9,8 @@ struct ContentView: View {
     /// Odkaz na `SystemPermissionManager` pre kontrolu oprávnení.
     @ObservedObject private var permissionManager = SystemPermissionManager.shared
 
+    @ObservedObject private var purchaseManager = PurchaseManager.shared
+
     /// Premenná na sledovanie, ktorá položka je pod kurzorom myši.
     @State private var hoveredItem: ClipboardItem? = nil
 
@@ -22,7 +24,7 @@ struct ContentView: View {
                 Text(LocalizedStringResource("clipboard_app_title"))
                     .font(.headline)
 
-                if PurchaseManager.shared.isProUnlocked {
+                if purchaseManager.isProUnlocked {
                     Text(LocalizedStringResource("label-pro"))
                         .font(.headline)
                         .fontWeight(.bold)
@@ -55,7 +57,9 @@ struct ContentView: View {
             ScrollViewReader { proxy in
                 ScrollView {
                     VStack(spacing: 8) { // Menšie medzery medzi položkami
-                        ForEach(clipboardManager.clipboardHistory, id: \.self) { item in
+                        ForEach(clipboardManager.clipboardHistory.filter { item in
+                            item.isText || (item.type == .imageFile && PurchaseManager.shared.isProUnlocked)
+                        }, id: \.self) { item in
                             let isHovered = hoveredItem == item
 
                             VStack(alignment: .leading, spacing: 4) {
@@ -151,7 +155,7 @@ struct ContentView: View {
                 }
             }
 
-            if !PurchaseManager.shared.isProUnlocked {
+            if !purchaseManager.isProUnlocked {
                 HStack {
                     Spacer()
                     Button(action: {

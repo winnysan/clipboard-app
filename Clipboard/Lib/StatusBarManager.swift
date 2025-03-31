@@ -14,6 +14,8 @@ class StatusBarManager {
     /// Ukladanie preferencií používateľa
     private let defaults = UserDefaults.standard
 
+    @ObservedObject private var purchaseManager = PurchaseManager.shared
+
     /// Kľúč pre nastavenie "Otvoriť okno pri kopírovaní"
     private let openWindowOnCopyKey = "openWindowOnCopy"
 
@@ -147,7 +149,7 @@ class StatusBarManager {
         launchAtStartupItem.state = LaunchManager.shared.isLaunchAtStartupEnabled() ? .on : .off
 
         menu.addItem(aboutItem)
-        if !PurchaseManager.shared.isProUnlocked {
+        if !purchaseManager.isProUnlocked {
             menu.addItem(purchaseItem)
         }
         menu.addItem(.separator()) // Oddelovač

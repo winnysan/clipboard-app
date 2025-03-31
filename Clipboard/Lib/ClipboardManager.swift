@@ -22,6 +22,10 @@ class ClipboardManager: ObservableObject {
     private var lastChangeCount: Int = NSPasteboard.general.changeCount
     private var lastWrittenText: String? = nil
 
+    /// Sleduje zmeny `isProUnlocked`
+    private var cancellables = Set<AnyCancellable>()
+    private(set) var isProUnlocked = PurchaseManager.shared.isProUnlocked
+
     /// Hash posledného vloženého obrázka (pre detekciu duplicitného vloženia)
     private var lastWrittenImageHash: String?
 
@@ -54,6 +58,15 @@ class ClipboardManager: ObservableObject {
 
         // Vymaže všetky obrázkové súbory, ktoré sa nenachádzajú v pripnutých položkách
         ImageManager.shared.cleanupUnusedImages(history: clipboardHistory, pinnedItems: pinnedItems)
+
+        // Sleduje zmeny `isProUnlocked`
+        PurchaseManager.shared.$isProUnlocked
+            .receive(on: RunLoop.main)
+            .sink { [weak self] newValue in
+                self?.isProUnlocked = newValue
+                appLog("🔄 Zmena stavu PRO: \(newValue ? "Aktivované" : "Deaktivované")", level: .info)
+            }
+            .store(in: &cancellables)
     }
 
     /// Skopíruje alebo vystrihne označený text zo systému, uloží ho do histórie a zobrazí okno aplikácie.
@@ -177,7 +190,7 @@ class ClipboardManager: ObservableObject {
     /// Vloží obrázok (ak je povolená Pro verzia a položka je typu `imageFile`).
     /// - Parameter imageFileName: názov obrázka zo schránky (napr. "XYZ123.png")
     func pasteImage(named imageFileName: String) {
-        guard PurchaseManager.shared.isProUnlocked else {
+        guard isProUnlocked else {
             appLog("🔒 Pokus o vloženie obrázka v bezplatnej verzii", level: .warning)
             return
         }
@@ -326,7 +339,7 @@ class ClipboardManager: ObservableObject {
                     appLog("🖼️ Schránka obsahuje obrázok. Dostupné typy:", level: .info)
                     readableTypes.forEach { appLog("🔸 \($0)", level: .info) }
 
-                    if PurchaseManager.shared.isProUnlocked {
+                    if self.isProUnlocked {
                         let newImageHash = ImageManager.shared.hashImageData(imageData)
 
                         // Preskočenie, ak ide o náš vlastný obrázok
