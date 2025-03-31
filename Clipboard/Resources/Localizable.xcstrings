@@ -86,6 +86,9 @@
         }
       }
     },
+    "Budúce funkcie bez ďalšieho poplatku" : {
+
+    },
     "cancel" : {
       "comment" : "Tlačidlo na zrušenie",
       "extractionState" : "manual",
@@ -103,6 +106,9 @@
           }
         }
       }
+    },
+    "Clipboard PRO" : {
+
     },
     "clipboard_app_title" : {
       "comment" : "Nadpis aplikácie",
@@ -260,6 +266,9 @@
         }
       }
     },
+    "Prejsť na PRO" : {
+
+    },
     "quit" : {
       "comment" : "Tlačidlo na ukončenie aplikácie",
       "extractionState" : "manual",
@@ -312,6 +321,12 @@
           }
         }
       }
+    },
+    "Zavrieť" : {
+
+    },
+    "Získajte viac funkcií a lepší zážitok" : {
+
     }
   },
   "version" : "1.0"

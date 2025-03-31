@@ -14,7 +14,9 @@ struct ContentView: View {
     
     /// Hover efekt pre tlačítko upgrade-to-pro
     @State private var upgradeButtonHovering = false
-
+    
+    @State private var showPurchaseView = false
+    
     var body: some View {
         VStack {
             /// Názov aplikácie zobrazený v hlavičke.
@@ -155,11 +157,13 @@ struct ContentView: View {
                 HStack {
                     Spacer()
                     Button(action: {
-                        // Upgrade to PRO
+                        showPurchaseView = true
                     }) {
                         Text(LocalizedStringResource("upgrade-to-pro"))
                             .font(.system(size: 11, weight: .medium))
                             .foregroundColor(upgradeButtonHovering ? .accentColor : .white.opacity(0.7))
+                            .padding(4)
+                            .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
                     .onHover { hovering in
@@ -169,9 +173,13 @@ struct ContentView: View {
                     }
                 }
                 .padding(.horizontal, 8)
-                .padding(.bottom, 16)
+                .padding(.bottom, 12)
             }
         }
         .frame(width: 300, height: 400)
+        .sheet(isPresented: $showPurchaseView) {
+            PurchaseView()
+        }
     }
 }
+
