@@ -156,6 +156,23 @@
         }
       }
     },
+    "label-pro" : {
+      "comment" : "Príznak odomknutej PRO verzie",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PRO"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PRO"
+          }
+        }
+      }
+    },
     "launch_prompt_message" : {
       "comment" : "Text pre povolenie automatického spustenia",
       "extractionState" : "manual",
@@ -243,23 +260,6 @@
         }
       }
     },
-    "pro" : {
-      "comment" : "Príznak odomknutej PRO verzie",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "PRO"
-          }
-        },
-        "sk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "PRO"
-          }
-        }
-      }
-    },
     "quit" : {
       "comment" : "Tlačidlo na ukončenie aplikácie",
       "extractionState" : "manual",
@@ -292,6 +292,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Spustiť pri štarte"
+          }
+        }
+      }
+    },
+    "upgrade-to-pro" : {
+      "comment" : "Tlačítko na odomknutie na PRO verzie",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Upgrade to PRO"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prejsť na PRO"
           }
         }
       }

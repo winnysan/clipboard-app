@@ -8,7 +8,7 @@ class PurchaseManager {
     /// Príznak, či používateľ odomkol Pro verziu (platí jednorazový nákup).
     /// Tento flag bude neskôr nahradený reálnou validáciou cez StoreKit.
     var isProUnlocked: Bool {
-        return true // <- nastavené na `true` počas vývoja
+        return false // <- nastavené na `true` počas vývoja
     }
 
     private init() {}
