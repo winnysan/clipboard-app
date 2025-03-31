@@ -1,38 +1,22 @@
 import SwiftUI
 
 struct PurchaseView: View {
-    @Environment(\.dismiss) var dismiss
+    var onClose: () -> Void
 
     var body: some View {
         VStack(spacing: 24) {
-            Text("Clipboard PRO")
+            Text(LocalizedStringResource("clipboard-pro"))
                 .font(.largeTitle)
                 .fontWeight(.bold)
 
-            Text("Získajte viac funkcií a lepší zážitok")
+            Text(LocalizedStringResource("upgrade-to-pro"))
                 .font(.headline)
                 .foregroundColor(.secondary)
 
             VStack(alignment: .leading, spacing: 16) {
                 HStack {
                     Image(systemName: "sparkles")
-                    Text("Budúce funkcie bez ďalšieho poplatku")
-                }
-                HStack {
-                    Image(systemName: "sparkles")
-                    Text("Budúce funkcie bez ďalšieho poplatku")
-                }
-                HStack {
-                    Image(systemName: "sparkles")
-                    Text("Budúce funkcie bez ďalšieho poplatku")
-                }
-                HStack {
-                    Image(systemName: "sparkles")
-                    Text("Budúce funkcie bez ďalšieho poplatku")
-                }
-                HStack {
-                    Image(systemName: "sparkles")
-                    Text("Budúce funkcie bez ďalšieho poplatku")
+                    Text(LocalizedStringResource("upgrade-to-pro"))
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -43,26 +27,25 @@ struct PurchaseView: View {
             Button(action: {
                 //
             }) {
-                Text("Prejsť na PRO")
+                Text(LocalizedStringResource("upgrade-to-pro"))
                     .font(.headline)
                     .foregroundColor(.white)
                     .padding(.vertical, 12)
                     .frame(maxWidth: .infinity)
-                }
-                .frame(maxWidth: .infinity)
-                .background(Color.accentColor)
-                .cornerRadius(10)
-                .focusable(false)
-
-            Button("Zavrieť") {
-                dismiss()
             }
+            .frame(maxWidth: .infinity)
+            .background(Color.accentColor)
+            .cornerRadius(10)
+            .focusable(false)
+
+            Button("close") {
+                onClose()
+            }
+            .padding(.bottom, 16)
             .foregroundColor(.secondary)
             .focusable(false)
         }
-        .padding(.vertical, 32)
         .padding(.horizontal, 24)
         .frame(width: 300)
     }
 }
-

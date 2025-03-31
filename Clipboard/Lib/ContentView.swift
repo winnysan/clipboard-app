@@ -11,19 +11,17 @@ struct ContentView: View {
 
     /// Premenná na sledovanie, ktorá položka je pod kurzorom myši.
     @State private var hoveredItem: ClipboardItem? = nil
-    
+
     /// Hover efekt pre tlačítko upgrade-to-pro
     @State private var upgradeButtonHovering = false
-    
-    @State private var showPurchaseView = false
-    
+
     var body: some View {
         VStack {
             /// Názov aplikácie zobrazený v hlavičke.
             HStack(spacing: 8) {
                 Text(LocalizedStringResource("clipboard_app_title"))
                     .font(.headline)
-                
+
                 if PurchaseManager.shared.isProUnlocked {
                     Text(LocalizedStringResource("label-pro"))
                         .font(.headline)
@@ -32,7 +30,7 @@ struct ContentView: View {
                 }
             }
             .padding()
-            
+
             /// Ak chýbajú oprávnenia, zobrazí sa upozornenie s odkazom na ich povolenie.
             if !permissionManager.hasPermission {
                 VStack {
@@ -41,7 +39,7 @@ struct ContentView: View {
                         .foregroundColor(.red)
                         .multilineTextAlignment(.center)
                         .padding(.bottom, 4)
-                    
+
                     Button(action: {
                         permissionManager.openAccessibilitySettings()
                     }) {
@@ -52,20 +50,20 @@ struct ContentView: View {
                 }
                 .padding(.horizontal, 12)
             }
-            
+
             /// Zabezpečenie správneho skrolovania pri zmene histórie.
             ScrollViewReader { proxy in
                 ScrollView {
                     VStack(spacing: 8) { // Menšie medzery medzi položkami
                         ForEach(clipboardManager.clipboardHistory, id: \.self) { item in
                             let isHovered = hoveredItem == item
-                            
+
                             VStack(alignment: .leading, spacing: 4) {
                                 Text(item.timestamp.formatted(date: .abbreviated, time: .shortened))
                                     .font(.caption2)
                                     .foregroundColor(.gray)
                                     .padding(.leading, 4)
-                                
+
                                 HStack(alignment: .top) {
                                     Button(action: {
                                         if let text = item.textValue {
@@ -116,7 +114,7 @@ struct ContentView: View {
                                     }
                                     .buttonStyle(.plain) // Odstránenie defaultného tlačidlového štýlu
                                     .id(item) // Unikátne ID pre skrolovanie
-                                    
+
                                     /// VStack na umiestnenie tlačidiel mimo záznamu vpravo
                                     VStack(alignment: .trailing, spacing: 4) {
                                         /// Tlačidlo na pripnutie položky
@@ -126,7 +124,7 @@ struct ContentView: View {
                                             Image(systemName: clipboardManager.pinnedItems.contains(item) ? "pin.fill" : "pin")
                                         }
                                         .buttonStyle(.borderless) // Odstránenie rámu tlačidla
-                                        
+
                                         /// Tlačidlo na odstránenie položky (Trash)
                                         Button(action: {
                                             clipboardManager.removeItem(item)
@@ -152,12 +150,12 @@ struct ContentView: View {
                     }
                 }
             }
-            
+
             if !PurchaseManager.shared.isProUnlocked {
                 HStack {
                     Spacer()
                     Button(action: {
-                        showPurchaseView = true
+                        PurchaseWindowManager.shared.showWindow()
                     }) {
                         Text(LocalizedStringResource("upgrade-to-pro"))
                             .font(.system(size: 11, weight: .medium))
@@ -173,13 +171,9 @@ struct ContentView: View {
                     }
                 }
                 .padding(.horizontal, 8)
-                .padding(.bottom, 12)
+                .padding(.bottom, 16)
             }
         }
         .frame(width: 300, height: 400)
-        .sheet(isPresented: $showPurchaseView) {
-            PurchaseView()
-        }
     }
 }
-

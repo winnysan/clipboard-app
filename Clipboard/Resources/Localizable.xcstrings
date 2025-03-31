@@ -86,9 +86,6 @@
         }
       }
     },
-    "Budúce funkcie bez ďalšieho poplatku" : {
-
-    },
     "cancel" : {
       "comment" : "Tlačidlo na zrušenie",
       "extractionState" : "manual",
@@ -107,9 +104,6 @@
         }
       }
     },
-    "Clipboard PRO" : {
-
-    },
     "clipboard_app_title" : {
       "comment" : "Nadpis aplikácie",
       "extractionState" : "manual",
@@ -124,6 +118,41 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Schránka"
+          }
+        }
+      }
+    },
+    "clipboard-pro" : {
+      "comment" : "Clipboard PRO",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clipboard PRO"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schránka PRO"
+          }
+        }
+      }
+    },
+    "close" : {
+      "comment" : "Zavrieť",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Close"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zavrieť"
           }
         }
       }
@@ -266,9 +295,6 @@
         }
       }
     },
-    "Prejsť na PRO" : {
-
-    },
     "quit" : {
       "comment" : "Tlačidlo na ukončenie aplikácie",
       "extractionState" : "manual",
@@ -306,7 +332,7 @@
       }
     },
     "upgrade-to-pro" : {
-      "comment" : "Tlačítko na odomknutie na PRO verzie",
+      "comment" : "Prejsť na PRO",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -321,12 +347,6 @@
           }
         }
       }
-    },
-    "Zavrieť" : {
-
-    },
-    "Získajte viac funkcií a lepší zážitok" : {
-
     }
   },
   "version" : "1.0"
