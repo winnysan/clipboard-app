@@ -69,7 +69,7 @@ class WindowManager: BaseWindowManager {
     /// Obnoví predchádzajúcu aplikáciu ako aktívnu.
     func restorePreviousFocus() {
         guard let app = previousApp else { return }
-        let success = app.activate(options: [.activateAllWindows])
+        let success = app.activate(options: [])
         appLog(success ? "✅ Fokus obnovený na: \(app.localizedName ?? "Neznáma aplikácia")" : "❌ Nepodarilo sa obnoviť fokus.", level: success ? .info : .error)
     }
 
