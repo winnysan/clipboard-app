@@ -8,7 +8,7 @@ class AboutWindowManager: BaseWindowManager {
 
     /// Privátny inicializátor – nastavuje veľkosť okna.
     private init() {
-        super.init(size: NSSize(width: 300, height: 300))
+        super.init(size: NSSize(width: 580, height: 680))
     }
 
     /// Otvorí okno s informáciami o aplikácii.
