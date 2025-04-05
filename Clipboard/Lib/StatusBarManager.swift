@@ -200,14 +200,6 @@ class StatusBarManager {
 
     /// Zobrazí okno "O aplikácii"
     @objc private func showAboutWindow() {
-        let appVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "Unknown"
-        let informativeText = String(format: NSLocalizedString("informative_text", comment: "Informácie o aplikácii"), appVersion)
-
-        let alert = NSAlert()
-        alert.messageText = NSLocalizedString("clipboard_app_title", comment: "Nadpis aplikácie")
-        alert.informativeText = informativeText
-        alert.alertStyle = .informational
-        alert.addButton(withTitle: "OK")
-        alert.runModal()
+        AboutWindowManager.shared.openWindow()
     }
 }
