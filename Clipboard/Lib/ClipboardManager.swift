@@ -22,10 +22,6 @@ class ClipboardManager: ObservableObject {
     private var lastChangeCount: Int = NSPasteboard.general.changeCount
     private var lastWrittenText: String? = nil
 
-    /// Sleduje zmeny `isProUnlocked`
-    private var cancellables = Set<AnyCancellable>()
-    private(set) var isProUnlocked = PurchaseManager.shared.isProUnlocked
-
     /// Hash posledného vloženého obrázka (pre detekciu duplicitného vloženia)
     private var lastWrittenImageHash: String?
 
@@ -58,15 +54,6 @@ class ClipboardManager: ObservableObject {
 
         // Vymaže všetky obrázkové súbory, ktoré sa nenachádzajú v pripnutých položkách
         ImageManager.shared.cleanupUnusedImages(history: clipboardHistory, pinnedItems: pinnedItems)
-
-        // Sleduje zmeny `isProUnlocked`
-        PurchaseManager.shared.$isProUnlocked
-            .receive(on: RunLoop.main)
-            .sink { [weak self] newValue in
-                self?.isProUnlocked = newValue
-                appLog("🔄 Zmena stavu PRO: \(newValue ? "Aktivované" : "Deaktivované")", level: .info)
-            }
-            .store(in: &cancellables)
     }
 
     /// Skopíruje alebo vystrihne označený text zo systému, uloží ho do histórie a zobrazí okno aplikácie.
@@ -190,11 +177,6 @@ class ClipboardManager: ObservableObject {
     /// Vloží obrázok (ak je povolená Pro verzia a položka je typu `imageFile`).
     /// - Parameter imageFileName: názov obrázka zo schránky (napr. "XYZ123.png")
     func pasteImage(named imageFileName: String) {
-        guard isProUnlocked else {
-            appLog("🔒 Pokus o vloženie obrázka v bezplatnej verzii", level: .warning)
-            return
-        }
-
         guard let imageURL = ImageManager.shared.imageFileURL(for: imageFileName),
               let image = NSImage(contentsOf: imageURL),
               let tiffData = image.tiffRepresentation
@@ -339,41 +321,37 @@ class ClipboardManager: ObservableObject {
                     appLog("🖼️ Schránka obsahuje obrázok. Dostupné typy:", level: .info)
                     readableTypes.forEach { appLog("🔸 \($0)", level: .info) }
 
-                    if self.isProUnlocked {
-                        let newImageHash = ImageManager.shared.hashImageData(imageData)
+                    let newImageHash = ImageManager.shared.hashImageData(imageData)
 
-                        // Preskočenie, ak ide o náš vlastný obrázok
-                        if newImageHash == self.lastWrittenImageHash {
-                            appLog("🔁 Preskočené: vložený obrázok je náš vlastný (hash match)", level: .debug)
-                            self.lastWrittenImageHash = nil
-                            return
+                    // Preskočenie, ak ide o náš vlastný obrázok
+                    if newImageHash == self.lastWrittenImageHash {
+                        appLog("🔁 Preskočené: vložený obrázok je náš vlastný (hash match)", level: .debug)
+                        self.lastWrittenImageHash = nil
+                        return
+                    }
+
+                    if let filename = ImageManager.shared.saveImage(imageData) {
+                        let item = ClipboardItem.imageFile(filename)
+                        self.clipboardHistory.removeAll { $0 == item }
+                        self.clipboardHistory.insert(item, at: 0)
+
+                        self.lastWrittenImageHash = newImageHash
+
+                        appLog("💾 Obrázok pridaný do histórie: \(filename)", level: .info)
+
+                        if self.pinnedItems.contains(item) {
+                            self.saveHistory()
                         }
 
-                        if let filename = ImageManager.shared.saveImage(imageData) {
-                            let item = ClipboardItem.imageFile(filename)
-                            self.clipboardHistory.removeAll { $0 == item }
-                            self.clipboardHistory.insert(item, at: 0)
+                        if self.clipboardHistory.count > self.maxHistorySize {
+                            self.clipboardHistory.removeLast()
+                        }
 
-                            self.lastWrittenImageHash = newImageHash
-
-                            appLog("💾 Obrázok pridaný do histórie: \(filename)", level: .info)
-
-                            if self.pinnedItems.contains(item) {
-                                self.saveHistory()
-                            }
-
-                            if self.clipboardHistory.count > self.maxHistorySize {
-                                self.clipboardHistory.removeLast()
-                            }
-
-                            if StatusBarManager.shared.openWindowOnCopy {
-                                WindowManager.shared.openWindow()
-                            }
-                        } else {
-                            appLog("❌ Ukladanie obrázka zlyhalo", level: .error)
+                        if StatusBarManager.shared.openWindowOnCopy {
+                            WindowManager.shared.openWindow()
                         }
                     } else {
-                        appLog("🔒 Obrázky nie sú povolené v bezplatnej verzii.", level: .warning)
+                        appLog("❌ Ukladanie obrázka zlyhalo", level: .error)
                     }
                 }
             }

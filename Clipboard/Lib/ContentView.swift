@@ -9,8 +9,6 @@ struct ContentView: View {
     /// Odkaz na `SystemPermissionManager` pre kontrolu oprávnení.
     @ObservedObject private var permissionManager = SystemPermissionManager.shared
 
-    @ObservedObject private var purchaseManager = PurchaseManager.shared
-
     /// Premenná na sledovanie, ktorá položka je pod kurzorom myši.
     @State private var hoveredItem: ClipboardItem? = nil
 
@@ -23,13 +21,6 @@ struct ContentView: View {
             HStack(spacing: 8) {
                 Text(LocalizedStringResource("clipboard_app_title"))
                     .font(.headline)
-
-                if purchaseManager.isProUnlocked {
-                    Text(LocalizedStringResource("label-pro"))
-                        .font(.headline)
-                        .fontWeight(.bold)
-                        .foregroundColor(.accentColor)
-                }
             }
             .padding()
 
@@ -58,7 +49,7 @@ struct ContentView: View {
                 ScrollView {
                     VStack(spacing: 8) { // Menšie medzery medzi položkami
                         ForEach(clipboardManager.clipboardHistory.filter { item in
-                            item.isText || (item.type == .imageFile && PurchaseManager.shared.isProUnlocked)
+                            item.isText || item.type == .imageFile
                         }, id: \.self) { item in
                             let isHovered = hoveredItem == item
 
@@ -153,29 +144,6 @@ struct ContentView: View {
                         }
                     }
                 }
-            }
-
-            if !purchaseManager.isProUnlocked {
-                HStack {
-                    Spacer()
-                    Button(action: {
-                        PurchaseWindowManager.shared.showWindow()
-                    }) {
-                        Text(LocalizedStringResource("upgrade-to-pro"))
-                            .font(.system(size: 11, weight: .medium))
-                            .foregroundColor(upgradeButtonHovering ? .accentColor : .white.opacity(0.7))
-                            .padding(4)
-                            .contentShape(Rectangle())
-                    }
-                    .buttonStyle(.plain)
-                    .onHover { hovering in
-                        withAnimation(.easeInOut(duration: 0.15)) {
-                            upgradeButtonHovering = hovering
-                        }
-                    }
-                }
-                .padding(.horizontal, 8)
-                .padding(.bottom, 16)
             }
         }
         .frame(width: 300, height: 400)

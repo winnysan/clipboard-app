@@ -122,23 +122,6 @@
         }
       }
     },
-    "clipboard-pro" : {
-      "comment" : "Clipboard PRO",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Clipboard PRO"
-          }
-        },
-        "sk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Schránka PRO"
-          }
-        }
-      }
-    },
     "close" : {
       "comment" : "Zavrieť",
       "extractionState" : "manual",
@@ -187,23 +170,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Verzia %@\nJednoduchá aplikácia na správu schránky pre macOS.\n© 2025 github.com/winnysan"
-          }
-        }
-      }
-    },
-    "label-pro" : {
-      "comment" : "Príznak odomknutej PRO verzie",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "PRO"
-          }
-        },
-        "sk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "PRO"
           }
         }
       }
@@ -327,23 +293,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Spustiť pri štarte"
-          }
-        }
-      }
-    },
-    "upgrade-to-pro" : {
-      "comment" : "Prejsť na PRO",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Upgrade to PRO"
-          }
-        },
-        "sk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Prejsť na PRO"
           }
         }
       }

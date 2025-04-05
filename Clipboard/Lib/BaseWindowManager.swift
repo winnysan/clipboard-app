@@ -15,7 +15,7 @@ class BaseWindowManager {
     /// Inicializácia so zvolenou veľkosťou okna.
     /// - Parameter size: Veľkosť okna v bodoch.
     init(size: NSSize) {
-        self.windowSize = size
+        windowSize = size
     }
 
     /// Zobrazí okno s jednotným vzhľadom a zadaným obsahom.
@@ -97,7 +97,7 @@ class BaseWindowManager {
         window.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
     }
-    
+
     /// Zavrie okno a uvoľní referenciu.
     func close() {
         window?.orderOut(nil)
@@ -109,7 +109,7 @@ class BaseWindowManager {
         close()
         window = nil
     }
-    
+
     /// Handler pre zatváracie tlačidlo.
     @objc private func closeWindow() {
         close()
@@ -142,4 +142,3 @@ class BaseWindowManager {
         }
     }
 }
-

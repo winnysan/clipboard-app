@@ -14,8 +14,6 @@ class StatusBarManager {
     /// Ukladanie preferencií používateľa
     private let defaults = UserDefaults.standard
 
-    @ObservedObject private var purchaseManager = PurchaseManager.shared
-
     /// Kľúč pre nastavenie "Otvoriť okno pri kopírovaní"
     private let openWindowOnCopyKey = "openWindowOnCopy"
 
@@ -104,14 +102,6 @@ class StatusBarManager {
         )
         aboutItem.target = self
 
-        // Položka "Prejsť na PRO"
-        let purchaseItem = NSMenuItem(
-            title: NSLocalizedString("upgrade-to-pro", comment: "Prejsť na PRO"),
-            action: #selector(showPurchaseWindow),
-            keyEquivalent: ""
-        )
-        purchaseItem.target = self
-
         // Položka "Sledovať systémovú schránku"
         let monitorClipboardItem = NSMenuItem(
             title: NSLocalizedString("monitor_clipboard", comment: "Sledovať systémovú schránku"),
@@ -149,9 +139,6 @@ class StatusBarManager {
         launchAtStartupItem.state = LaunchManager.shared.isLaunchAtStartupEnabled() ? .on : .off
 
         menu.addItem(aboutItem)
-        if !purchaseManager.isProUnlocked {
-            menu.addItem(purchaseItem)
-        }
         menu.addItem(.separator()) // Oddelovač
         menu.addItem(monitorClipboardItem)
         menu.addItem(openWindowItem)
@@ -222,10 +209,5 @@ class StatusBarManager {
         alert.alertStyle = .informational
         alert.addButton(withTitle: "OK")
         alert.runModal()
-    }
-
-    /// Zobrazí okno "Prejsť na PRO"
-    @objc private func showPurchaseWindow() {
-        PurchaseWindowManager.shared.showWindow()
     }
 }
