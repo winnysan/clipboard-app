@@ -54,6 +54,17 @@ class KeyboardManager {
                                              return nil // Zablokuje pôvodnú akciu
                                          }
 
+                                         // Ak je stlačené Command + V, len zatvor okno, ak je nastavené
+                                         if flags.contains(.maskCommand), keyCode == 9 { // 9 = V
+                                             appLog("📋 Stlačené: Cmd + V (len pasívne sledovanie)", level: .debug)
+
+                                             if StatusBarManager.shared.closeWindowOnPaste {
+                                                 WindowManager.shared.closeWindow()
+                                             }
+
+                                             return Unmanaged.passRetained(event) // Neblokuj akciu!
+                                         }
+
                                          return Unmanaged.passRetained(event)
                                      }, userInfo: nil)
 
