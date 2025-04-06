@@ -47,7 +47,7 @@ struct ContentView: View {
             /// Zabezpečenie správneho skrolovania pri zmene histórie.
             ScrollViewReader { proxy in
                 ScrollView {
-                    VStack(spacing: 8) { // Menšie medzery medzi položkami
+                    VStack(spacing: 12) {
                         ForEach(clipboardManager.clipboardHistory.filter { item in
                             item.isText || item.type == .imageFile
                         }, id: \.self) { item in
@@ -73,29 +73,28 @@ struct ContentView: View {
                                             // Zobrazenie textu alebo typ položky
                                             if let text = item.textValue {
                                                 Text(text)
-                                                    .padding(.vertical, 8)
+                                                    .padding(.vertical, 10)
                                                     .padding(.horizontal, 12)
                                                     .frame(maxWidth: .infinity, alignment: .leading)
-                                                    .lineLimit(3)
+                                                    .lineLimit(4)
+                                                    .frame(height: 86, alignment: .top)
                                             } else if let imageName = item.imageFileName,
                                                       let imageURL = ImageManager.shared.imageFileURL(for: imageName),
                                                       let nsImage = NSImage(contentsOf: imageURL)
                                             {
-                                                HStack {
+                                                HStack(alignment: .top) {
                                                     Image(nsImage: nsImage)
                                                         .resizable()
                                                         .aspectRatio(contentMode: .fit)
-                                                        .frame(maxHeight: 60) // výška obmedzená, šírka sa prispôsobí
-                                                        .cornerRadius(4)
-                                                        .overlay(
-                                                            RoundedRectangle(cornerRadius: 4)
-                                                                .stroke(Color.white.opacity(0.2), lineWidth: 1)
-                                                        )
-                                                        .shadow(color: .black.opacity(0.15), radius: 3, x: 0, y: 1)
+                                                        .frame(maxWidth: 276, maxHeight: 68, alignment: .topLeading)
+                                                        .clipped()
+
+                                                    Spacer()
                                                 }
-                                                .frame(maxWidth: .infinity, alignment: .leading)
-                                                .padding(12)
+                                                .frame(height: 86)
+                                                .padding(.horizontal, 12)
                                             }
+
                                             Spacer()
                                         }
                                         .background(isHovered ? Color.white.opacity(0.25) : Color.white.opacity(0.15)) // Efekt hoveru
@@ -133,7 +132,7 @@ struct ContentView: View {
                             }
                         }
                     }
-                    .padding(.horizontal, 12) // Jemná medzera na krajoch zoznamu
+                    .padding(.horizontal, 16) // Jemná medzera na krajoch zoznamu
                     .padding(.vertical, 5)
                 }
                 /// Automatické skrolovanie hore pri zmene histórie.
@@ -146,6 +145,6 @@ struct ContentView: View {
                 }
             }
         }
-        .frame(width: 300, height: 400)
+        .frame(width: 360, height: 530)
     }
 }

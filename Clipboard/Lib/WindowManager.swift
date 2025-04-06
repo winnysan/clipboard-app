@@ -14,7 +14,7 @@ class WindowManager: BaseWindowManager {
 
     /// Privátny inicializátor zabraňujúci vytvoreniu ďalších inštancií.
     private init() {
-        super.init(size: NSSize(width: 300, height: 400))
+        super.init(size: NSSize(width: 360, height: 530))
     }
 
     /// Konfiguruje hlavné okno aplikácie s vizuálnymi vlastnosťami a rozložením.

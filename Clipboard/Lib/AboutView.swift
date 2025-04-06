@@ -124,4 +124,3 @@ struct AboutView: View {
         .padding(.vertical, 28)
     }
 }
-
