@@ -18,7 +18,7 @@ func appLog(_ message: String, level: LogLevel = .debug) {
         print("[\(level)] \(message)") // V debug režime logujeme všetko
     #else
         if level == .error || level == .warning {
-            let log = OSLog(subsystem: "com.yourcompany.Clipboard", category: "critical")
+            let log = OSLog(subsystem: "com.winnysan.clipboard", category: "critical")
             os_log("%{public}@", log: log, type: .error, message)
         }
     #endif
