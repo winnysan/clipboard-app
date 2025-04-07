@@ -278,13 +278,13 @@
       }
     },
     "feature_history" : {
-      "comment" : "História schránky",
+      "comment" : "Funkcia: História schránky",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Funkcia: História schránky"
+            "value" : "Clipboard history"
           }
         },
         "sk" : {
