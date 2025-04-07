@@ -1,67 +1,62 @@
 import Cocoa
+import Combine
 
+/// Hlavný delegát aplikácie, ktorý inicializuje a spravuje jej životný cyklus.
+/// Zodpovedá za požiadanie oprávnení, spustenie sledovania klávesových skratiek,
+/// inicializáciu hlavného okna aplikácie (`WindowManager`) a správu stavovej lišty (`StatusBarManager`).
 class AppDelegate: NSObject, NSApplicationDelegate {
-    var eventTap: CFMachPort?
+    /// Správca sledovania klávesových skratiek.
+    private var keyboardManager: KeyboardManager?
 
-    func applicationDidFinishLaunching(_ aNotification: Notification) {
-        print("✅ Aplikácia spustená na pozadí.")
+    /// Správca systémových oprávnení.
+    private let systemPermissionManager = SystemPermissionManager.shared
 
-        let mask = CGEventMask(1 << CGEventType.keyDown.rawValue)
-        eventTap = CGEvent.tapCreate(tap: .cghidEventTap,
-                                     place: .headInsertEventTap,
-                                     options: .defaultTap,
-                                     eventsOfInterest: mask,
-                                     callback: { _, type, event, _ -> Unmanaged<CGEvent>? in
-            if type == .keyDown {
-                let keyCode = event.getIntegerValueField(.keyboardEventKeycode)
-                let flags = event.flags
+    /// Ukladá `AnyCancellable` objekty pre sledovanie zmien oprávnenia.
+    private var cancellables = Set<AnyCancellable>()
 
-                if flags.contains(.maskControl) && keyCode == 8 { // 8 = C
-                    print("📝 Stlačené: Control + C")
-                    AppDelegate.copySelectedText()
-                    return nil // Zablokuje pôvodnú akciu
+    /// Volá sa pri spustení aplikácie a inicializuje potrebné služby.
+    /// - Parameter aNotification: Systémová notifikácia pri štarte aplikácie.
+    func applicationDidFinishLaunching(_: Notification) {
+        // Inicializácia a konfigurácia hlavného okna aplikácie.
+        WindowManager.shared.configureWindow()
+
+        // Inicializácia stavovej lišty.
+        StatusBarManager.shared.setupStatusBar()
+
+        appLog("✅ Aplikácia spustená na pozadí.", level: .info)
+
+        // Automaticky požiada používateľa o povolenie spustenia pri štarte, ak nie je nastavené.
+        LaunchManager.shared.requestLaunchAtStartup()
+
+        // Požiadavka na oprávnenia pre Accessibility API
+        systemPermissionManager.requestAccessibilityPermission()
+
+        // Spustíme sledovanie oprávnení a zabezpečíme, že klávesové skratky sa aktivujú po ich udelení
+        systemPermissionManager.startMonitoringPermission()
+
+        // Pri zmene oprávnení okamžite aktualizujeme stav klávesových skratiek
+        systemPermissionManager.$hasPermission.sink { hasPermission in
+            if hasPermission {
+                if self.keyboardManager == nil {
+                    self.keyboardManager = KeyboardManager()
+                    appLog("⌨️ Sledovanie klávesových skratiek bolo spustené.", level: .info)
                 }
-            }
-            return Unmanaged.passRetained(event)
-        }, userInfo: nil)
-
-        if let eventTap = eventTap {
-            let runLoopSource = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, eventTap, 0)
-            CFRunLoopAddSource(CFRunLoopGetCurrent(), runLoopSource, .commonModes)
-            CGEvent.tapEnable(tap: eventTap, enable: true)
-        } else {
-            print("❌ Nepodarilo sa vytvoriť Event Tap.")
-        }
-    }
-
-    func applicationWillTerminate(_ aNotification: Notification) {
-        eventTap = nil
-    }
-
-    static func copySelectedText() {
-        let pasteboard = NSPasteboard.general
-        pasteboard.clearContents()
-
-        let source = CGEventSource(stateID: .hidSystemState)
-        let cmdDown = CGEvent(keyboardEventSource: source, virtualKey: 0x37, keyDown: true) // Command
-        let cDown = CGEvent(keyboardEventSource: source, virtualKey: 0x08, keyDown: true) // C
-        let cmdUp = CGEvent(keyboardEventSource: source, virtualKey: 0x37, keyDown: false)
-        let cUp = CGEvent(keyboardEventSource: source, virtualKey: 0x08, keyDown: false)
-
-        cmdDown?.flags = .maskCommand
-        cDown?.flags = .maskCommand
-
-        cmdDown?.post(tap: .cghidEventTap)
-        cDown?.post(tap: .cghidEventTap)
-        cUp?.post(tap: .cghidEventTap)
-        cmdUp?.post(tap: .cghidEventTap)
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            if let copiedText = pasteboard.string(forType: .string), !copiedText.isEmpty {
-                print("📋 Skopírovaný text: \(copiedText)")
             } else {
-                print("⚠️ Nepodarilo sa získať text.")
+                self.keyboardManager = nil
+                appLog("⚠️ Klávesové skratky boli deaktivované kvôli chýbajúcim oprávneniam.", level: .warning)
             }
         }
+        .store(in: &cancellables)
+    }
+
+    /// Volá sa pri ukončení aplikácie a uvoľňuje zdroje.
+    /// - Parameter aNotification: Systémová notifikácia pri ukončení aplikácie.
+    func applicationWillTerminate(_: Notification) {
+        keyboardManager = nil
+        systemPermissionManager.stopMonitoringPermission() // Ukončí sledovanie oprávnení
+        ClipboardManager.shared.stopMonitoringClipboard()
+        // Vyčistenie obrázkov pred ukončením aplikácie
+        ImageManager.shared.cleanupUnusedImages(history: ClipboardManager.shared.clipboardHistory, pinnedItems: ClipboardManager.shared.pinnedItems)
+        appLog("🚪 Aplikácia bola ukončená.", level: .info)
     }
 }

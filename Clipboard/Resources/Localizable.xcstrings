@@ -1,0 +1,494 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "about_app" : {
+      "comment" : "O aplikácii",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "About Clipboard"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O Clipboard"
+          }
+        }
+      }
+    },
+    "about_project" : {
+      "comment" : "Tlačidlo o projekte",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "About Project"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O projekte"
+          }
+        }
+      }
+    },
+    "accessibility_permission_location" : {
+      "comment" : "Informácia, kde možno udeliť oprávnenie Prístupnosti",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Permission can be granted in: System Settings → Privacy & Security → Accessibility"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oprávnenie je možné udeliť v: Systémové nastavenia → Súkromie a bezpečnosť → Prístupnosť"
+          }
+        }
+      }
+    },
+    "accessibility_permission_message" : {
+      "comment" : "Aplikácia potrebuje oprávnenie na sledovanie klávesových skratiek.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The application needs permission to track keyboard shortcuts. Enable it in System Settings > Privacy & Security > Accessibility."
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aplikácia potrebuje oprávnenie na sledovanie klávesových skratiek. Povoľte ju v Systémové nastavenia > Súkromie a bezpečnosť > Prístupnosť."
+          }
+        }
+      }
+    },
+    "accessibility_permission_notice" : {
+      "comment" : "Informácia o potrebe oprávnenia Prístupnosti",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This app requires Accessibility access to respond to system-wide keyboard shortcuts."
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Táto aplikácia vyžaduje prístup k funkcii \"Prístupnosť\" (Accessibility), aby mohla reagovať na systémové klávesové skratky."
+          }
+        }
+      }
+    },
+    "accessibility_permission_required" : {
+      "comment" : "Oprávnenie požadované",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accessibility permission required"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oprávnenie požadované"
+          }
+        }
+      }
+    },
+    "allow" : {
+      "comment" : "Tlačidlo na povolenie",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allow"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Povoliť"
+          }
+        }
+      }
+    },
+    "application_has_no_permissions" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⚠️ The application does not have access to the keyboard controls."
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⚠️ Aplikácia nemá prístup k ovládaniu klávesnice."
+          }
+        }
+      }
+    },
+    "cancel" : {
+      "comment" : "Tlačidlo na zrušenie",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancel"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zrušiť"
+          }
+        }
+      }
+    },
+    "clipboard_about_description" : {
+      "comment" : "Popis aplikácie v About okne",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clipboard is a simple yet powerful app for managing your clipboard.\n\nIt allows you to copy and paste text and images, store history, pin important items, and reuse them quickly."
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clipboard je jednoduchá, ale výkonná aplikácia pre správu vašej schránky.\n\nUmožňuje kopírovať a vkladať texty a obrázky, ukladať ich do histórie, pripínať dôležité položky a rýchlo ich opätovne použiť."
+          }
+        }
+      }
+    },
+    "clipboard_app_title" : {
+      "comment" : "Nadpis aplikácie",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clipboard"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schránka"
+          }
+        }
+      }
+    },
+    "close" : {
+      "comment" : "Zavrieť",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Close"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zavrieť"
+          }
+        }
+      }
+    },
+    "close_window_on_paste" : {
+      "comment" : "Zatvoriť okno pri vložení",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Close window on paste"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zatvoriť okno pri vložení"
+          }
+        }
+      }
+    },
+    "copyright_notice" : {
+      "comment" : "Copyright text v pätičke About okna",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "© 2025 github.com/winnysan"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "© 2025 github.com/winnysan"
+          }
+        }
+      }
+    },
+    "feature_autostart" : {
+      "comment" : "Funkcia: Spustenie pri štarte",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Launch at startup"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spustenie pri štarte"
+          }
+        }
+      }
+    },
+    "feature_history" : {
+      "comment" : "História schránky",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Funkcia: História schránky"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "História schránky"
+          }
+        }
+      }
+    },
+    "feature_images" : {
+      "comment" : "Funkcia: Podpora obrázkov",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Image support"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Podpora obrázkov"
+          }
+        }
+      }
+    },
+    "feature_pin" : {
+      "comment" : "Funkcia: Pripínanie položiek",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pin items"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pripínanie položiek"
+          }
+        }
+      }
+    },
+    "feature_shortcuts" : {
+      "comment" : "Funkcia: Klávesové skratky",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keyboard shortcuts"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Klávesové skratky"
+          }
+        }
+      }
+    },
+    "launch_prompt_message" : {
+      "comment" : "Text pre povolenie automatického spustenia",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Do you want the app to launch automatically at system startup?"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chcete, aby sa aplikácia spustila automaticky pri štarte systému?"
+          }
+        }
+      }
+    },
+    "launch_prompt_title" : {
+      "comment" : "Názov dialógu pre automatické spustenie",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enable automatic startup?"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Povoliť automatické spustenie?"
+          }
+        }
+      }
+    },
+    "monitor_clipboard" : {
+      "comment" : "Sledovať systémovú schránku",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Monitor the system clipboard"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sledovať systémovú schránku"
+          }
+        }
+      }
+    },
+    "open_settings" : {
+      "comment" : "Otvoriť nastavenia",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open settings"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otvoriť nastavenia"
+          }
+        }
+      }
+    },
+    "open_window_on_copy" : {
+      "comment" : "Otvoriť okno pri kopírovaní",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open window on copy"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otvoriť okno pri kopírovaní"
+          }
+        }
+      }
+    },
+    "quit" : {
+      "comment" : "Tlačidlo na ukončenie aplikácie",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quit Application"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ukončiť aplikáciu"
+          }
+        }
+      }
+    },
+    "start_at_login" : {
+      "comment" : "Tlačidlo na povolenie spustenia aplikácie pri prihlasení",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start at Login"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spustiť pri štarte"
+          }
+        }
+      }
+    },
+    "support_development" : {
+      "comment" : "Tlačidlo na podporu vývoja",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Support Development"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Podporiť vývoj"
+          }
+        }
+      }
+    },
+    "v%@" : {
+      "comment" : "Formátovaný reťazec pre verziu aplikácie",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}
