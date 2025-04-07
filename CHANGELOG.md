@@ -1,9 +1,11 @@
 # Changelog
 
 ## [1.0.0] - 2025-04-06
-### Added
+
+### First release
+
 - System clipboard tracking (text + images)
 - Keyboard shortcuts (Control+C, Control+V, Option+V)
 - Status bar icon
-- Clipboard history with pinning and unpinning options
+- Clipboard history with pinning options
 - Support for dark/light mode

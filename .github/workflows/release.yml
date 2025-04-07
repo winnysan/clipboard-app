@@ -1,0 +1,45 @@
+# .github/workflows/release.yml
+name: Release z PR dev → main
+
+on:
+  pull_request:
+    branches:
+      - main
+    types: [closed]
+
+jobs:
+  create-release:
+    if: github.event.pull_request.merged == true && github.head_ref == 'dev' && github.base_ref == 'main'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repozitára
+        uses: actions/checkout@v4
+
+      - name: Nájsť najnovší .dmg súbor v dist/
+        id: find_dmg
+        run: |
+          latest_dmg=$(ls -t dist/Clipboard-v*.dmg | head -n 1)
+          echo "file_path=$latest_dmg" >> $GITHUB_OUTPUT
+
+      - name: Extrahovať verziu zo súboru
+        id: extract_info
+        run: |
+          filename=$(basename "${{ steps.find_dmg.outputs.file_path }}")
+          echo "filename=$filename" >> $GITHUB_OUTPUT
+
+          # Očakáva Clipboard-v1.0.0.dmg
+          version=$(echo "$filename" | grep -oP 'v\d+\.\d+\.\d+')
+          echo "version=$version" >> $GITHUB_OUTPUT
+          echo "tag_name=$version" >> $GITHUB_OUTPUT
+          echo "release_name=Release $version" >> $GITHUB_OUTPUT
+
+      - name: Vytvoriť GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.extract_info.outputs.tag_name }}
+          name: ${{ steps.extract_info.outputs.release_name }}
+          body: ${{ github.event.pull_request.body }}
+          files: ${{ steps.find_dmg.outputs.file_path }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

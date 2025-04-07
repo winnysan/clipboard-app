@@ -36,7 +36,7 @@ To fully function, the app requires **Accessibility permission** to respond to g
 
 ## 🔗 Links
 
-- [🏠 About](https://winnysan.github.io/clipboard-app)
+- [🏠 About Clipboard](https://winnysan.github.io/clipboard-app)
 - [☕ Buy Me a Coffee](https://buymeacoffee.com/winnysan)
 
 ---
@@ -54,4 +54,4 @@ Clipboard supports **light and dark mode**. It respects your system preferences 
 
 ---
 
-> *Simple. Powerful. macOS native.*
+> _Simple. Powerful. macOS native._
