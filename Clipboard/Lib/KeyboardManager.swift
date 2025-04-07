@@ -23,6 +23,11 @@ class KeyboardManager {
                                      callback: { _, type, event, _ -> Unmanaged<CGEvent>? in
                                          guard type == .keyDown else { return Unmanaged.passRetained(event) }
 
+                                         // Overenie, či sú klávesové skratky povolené
+                                         if !StatusBarManager.shared.enableKeyboardShortcuts {
+                                             return Unmanaged.passRetained(event)
+                                         }
+
                                          let keyCode = event.getIntegerValueField(.keyboardEventKeycode)
                                          let flags = event.flags
 

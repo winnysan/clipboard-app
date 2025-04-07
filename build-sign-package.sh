@@ -22,7 +22,7 @@ set -e
 APP_NAME="Clipboard"
 SCHEME="Clipboard"
 CONFIGURATION="Release"
-VERSION="1.0.0"  # 🔧 Uprav podľa aktuálnej verzie
+VERSION="1.1.0"  # 🔧 Uprav podľa aktuálnej verzie
 CERT_ID="Developer ID Application: Marek Vinárčik (9596TA4J3J)"  # 🔧 Uprav podľa mena certifikátu
 
 BUILD_DIR=".build"

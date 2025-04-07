@@ -242,6 +242,23 @@
         }
       }
     },
+    "enable_keyboard_shortcuts" : {
+      "comment" : "Povoliť klávesové skratky",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enable keyboard shortcuts"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Povoliť klávesové skratky"
+          }
+        }
+      }
+    },
     "feature_autostart" : {
       "comment" : "Funkcia: Spustenie pri štarte",
       "extractionState" : "manual",
@@ -261,13 +278,13 @@
       }
     },
     "feature_history" : {
-      "comment" : "História schránky",
+      "comment" : "Funkcia: História schránky",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Funkcia: História schránky"
+            "value" : "Clipboard history"
           }
         },
         "sk" : {
