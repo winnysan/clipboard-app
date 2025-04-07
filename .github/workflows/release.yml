@@ -1,32 +1,45 @@
-name: Release Clipboard App
+# .github/workflows/release.yml
+name: Release z PR dev → main
 
 on:
-  push:
-    tags:
-      - 'v*.*.*'
+  pull_request:
+    branches:
+      - main
+    types: [closed]
 
 jobs:
-  release:
+  create-release:
+    if: github.event.pull_request.merged == true && github.head_ref == 'dev' && github.base_ref == 'main'
     runs-on: ubuntu-latest
+
     steps:
-      - name: ⬇️ Checkout repo
+      - name: Checkout repozitára
         uses: actions/checkout@v4
 
-      - name: 🔍 Find .dmg in dist/
+      - name: Nájsť najnovší .dmg súbor v dist/
         id: find_dmg
         run: |
-          FILE=$(find dist -name "*.dmg" | head -n 1)
-          if [ -z "$FILE" ]; then
-            echo "❌ .dmg file not found in dist/"
-            exit 1
-          fi
-          echo "DMG_FILE=$FILE" >> $GITHUB_ENV
+          latest_dmg=$(ls -t dist/Clipboard-v*.dmg | head -n 1)
+          echo "file_path=$latest_dmg" >> $GITHUB_OUTPUT
 
-      - name: 🚀 Create GitHub Release
+      - name: Extrahovať verziu zo súboru
+        id: extract_info
+        run: |
+          filename=$(basename "${{ steps.find_dmg.outputs.file_path }}")
+          echo "filename=$filename" >> $GITHUB_OUTPUT
+
+          # Očakáva Clipboard-v1.0.0.dmg
+          version=$(echo "$filename" | grep -oP 'v\d+\.\d+\.\d+')
+          echo "version=$version" >> $GITHUB_OUTPUT
+          echo "tag_name=$version" >> $GITHUB_OUTPUT
+          echo "release_name=Release $version" >> $GITHUB_OUTPUT
+
+      - name: Vytvoriť GitHub release
         uses: softprops/action-gh-release@v2
         with:
-          name: "Release ${{ github.ref_name }}"
-          tag_name: ${{ github.ref_name }}
-          files: ${{ env.DMG_FILE }}
+          tag_name: ${{ steps.extract_info.outputs.tag_name }}
+          name: ${{ steps.extract_info.outputs.release_name }}
+          body: ${{ github.event.pull_request.body }}
+          files: ${{ steps.find_dmg.outputs.file_path }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
