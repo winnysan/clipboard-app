@@ -23,6 +23,9 @@ class StatusBarManager {
     /// Kľúč pre nastavenie "Sledovanie systémovej schránky".
     private let monitorClipboardKey = "monitorClipboard"
 
+    /// Kľúč pre nastavenie "Klávesové skratky"
+    private let enableKeyboardShortcutsKey = "enableKeyboardShortcuts"
+
     /// Hodnota pre "Otvoriť okno pri kopírovaní"
     var openWindowOnCopy: Bool {
         get { defaults.bool(forKey: openWindowOnCopyKey) }
@@ -41,12 +44,19 @@ class StatusBarManager {
         set { defaults.set(newValue, forKey: monitorClipboardKey) }
     }
 
+    /// Hodnota pre "Klávesové skratky".
+    var enableKeyboardShortcuts: Bool {
+        get { defaults.bool(forKey: enableKeyboardShortcutsKey) }
+        set { defaults.set(newValue, forKey: enableKeyboardShortcutsKey) }
+    }
+
     /// Registrovanie predvolených hodnôt pri prvom spustení aplikácie.
     func registerDefaultPreferences() {
         let defaultValues: [String: Any] = [
             openWindowOnCopyKey: false, // Predvolene vypnuté
             closeWindowOnPasteKey: true, // Predvolene zapnuté
             monitorClipboardKey: true, // Predvolene zapnuté
+            enableKeyboardShortcutsKey: true, // Predvolene zapnuté
         ]
         defaults.register(defaults: defaultValues)
     }
@@ -111,6 +121,15 @@ class StatusBarManager {
         monitorClipboardItem.target = self
         monitorClipboardItem.state = monitorClipboard ? .on : .off
 
+        // Položka "Povoliť klávesové skratky"
+        let keyboardShortcutsItem = NSMenuItem(
+            title: NSLocalizedString("enable_keyboard_shortcuts", comment: "Povoliť klávesové skratky"),
+            action: #selector(toggleKeyboardShortcuts),
+            keyEquivalent: ""
+        )
+        keyboardShortcutsItem.target = self
+        keyboardShortcutsItem.state = enableKeyboardShortcuts ? .on : .off
+
         // Položka "Otvoriť okno pri kopírovaní"
         let openWindowItem = NSMenuItem(
             title: NSLocalizedString("open_window_on_copy", comment: "Otvoriť okno pri kopírovaní"),
@@ -141,6 +160,7 @@ class StatusBarManager {
         menu.addItem(aboutItem)
         menu.addItem(.separator()) // Oddelovač
         menu.addItem(monitorClipboardItem)
+        menu.addItem(keyboardShortcutsItem)
         menu.addItem(openWindowItem)
         menu.addItem(closeWindowItem)
         menu.addItem(launchAtStartupItem)
@@ -172,6 +192,12 @@ class StatusBarManager {
             ClipboardManager.shared.stopMonitoringClipboard()
             appLog("🔴 Vypnuté sledovanie systémovej schránky", level: .info)
         }
+    }
+
+    /// Prepne stav "Povoliť klávesové skratky"
+    @objc private func toggleKeyboardShortcuts() {
+        enableKeyboardShortcuts.toggle()
+        appLog("🔄 Klávesové skratky: \(enableKeyboardShortcuts ? "Zapnuté" : "Vypnuté")", level: .info)
     }
 
     /// Prepne stav "Otvoriť okno pri kopírovaní"
