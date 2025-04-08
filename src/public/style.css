@@ -21,6 +21,34 @@ html {
   scroll-behavior: smooth;
 }
 
+html {
+  font-size: 1rem;
+}
+
+@media (min-width: 769px) {
+  html {
+    font-size: 1.2rem;
+  }
+}
+
+@media (min-width: 1025px) {
+  html {
+    font-size: 1.5rem;
+  }
+}
+
+@media (min-width: 1281px) {
+  html {
+    font-size: 1.6rem;
+  }
+}
+
+@media (min-width: 1537px) {
+  html {
+    font-size: 1.8rem;
+  }
+}
+
 /* CONTAINER CHECK */
 
 .container-check {
@@ -67,8 +95,15 @@ html {
 }
 
 /* max-width: 1536px */
-@media (min-width: 1280px) {
+@media (min-width: 1280px) and (max-width: 1535.98px) {
   span.max-width-1536 {
+    display: inline;
+  }
+}
+
+/* max-width: 1536px */
+@media (min-width: 1536px) {
+  span.min-width-1536 {
     display: inline;
   }
 }
@@ -131,7 +166,6 @@ a {
   background: url('background.jpg') center center / cover no-repeat;
   position: relative;
   overflow: hidden;
-  color: var(--white);
 }
 
 .hero-content {
@@ -146,25 +180,32 @@ a {
   position: absolute;
   top: 10%;
   bottom: 10%;
-  left: 10%;
-  width: 70%;
+  left: 5%;
+  width: 90%;
   display: flex;
-  align-items: center;
+  align-items: start;
   justify-content: center;
   z-index: 2;
-  border: 1px solid white;
+}
+
+@media (min-width: 1025px) {
+  .hero-body {
+    left: 10%;
+    width: 70%;
+    align-items: center;
+  }
 }
 
 .hero-body h1 {
   margin-left: -0.5rem;
-  font-size: 10rem;
+  font-size: 5rem;
   font-weight: bold;
   color: var(--white);
   letter-spacing: -0.3rem;
 }
 
 .hero-body p {
-  font-size: 3rem;
+  font-size: 2rem;
   font-weight: bold;
   letter-spacing: -0.05rem;
   color: var(--white);
@@ -186,10 +227,10 @@ a {
 
 .hero-body a .title {
   color: var(--dark);
-  font-size: 2rem;
+  font-size: 1rem;
   text-transform: uppercase;
   font-weight: bold;
-  letter-spacing: 0.2rem;
+  letter-spacing: 0.1rem;
 }
 
 .hero-body a .version {
@@ -198,12 +239,18 @@ a {
 
 .app-image {
   position: sticky;
-  top: 0;
-  right: 5%;
+  top: 50vh;
   max-width: 100%;
-  height: 80%;
+  height: 60%;
   max-height: 90vh;
-  object-fit: contain;
+}
+
+@media (min-width: 1025px) {
+  .app-image {
+    top: 0;
+    right: 10%;
+    height: 80%;
+  }
 }
 
 /* SECTIONS */
