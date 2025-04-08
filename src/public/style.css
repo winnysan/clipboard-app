@@ -45,10 +45,6 @@ html {
   }
 }
 
-html {
-  scroll-snap-type: y mandatory;
-}
-
 a {
   text-decoration: none;
 }
@@ -204,7 +200,8 @@ a {
   font-size: 5rem;
   font-weight: bold;
   color: var(--white);
-  letter-spacing: -0.3rem;
+  letter-spacing: -0.2rem;
+  text-shadow: 0px 0px 2px var(--dark);
 }
 
 .hero-body p {
@@ -212,6 +209,7 @@ a {
   font-weight: bold;
   letter-spacing: -0.05rem;
   color: var(--white);
+  text-shadow: 0px 0px 2px var(--dark);
 }
 
 .hero-body a {
@@ -222,6 +220,7 @@ a {
   padding: 1rem 2rem;
   border-radius: 1rem;
   transition: background-color 0.3s ease-in-out;
+  box-shadow: 0px 0px 1px var(--dark);
 }
 
 .hero-body a:hover {
@@ -259,12 +258,12 @@ a {
 /* SECTIONS */
 
 .section {
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
   color: var(--dark);
-  scroll-snap-align: start;
+  padding: 2rem 0;
 }
 
 .section.white {
@@ -273,4 +272,70 @@ a {
 
 .section.gray {
   background-color: var(--gray);
+}
+
+.section .title {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.section .group-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+@media (min-width: 1025px) {
+  .section .group-wrapper {
+    gap: 1rem;
+  }
+}
+
+.section .group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.section .group .info {
+  flex: 1;
+  min-width: 250px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.section .group img {
+  width: auto;
+  max-height: 30vh;
+  object-fit: cover;
+  border-radius: 1rem;
+  margin: 0 2rem;
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .section .group .info {
+    margin-bottom: 1rem;
+  }
+}
+
+@media (min-width: 769px) {
+  .section .group img {
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+    max-height: none;
+  }
+}
+
+@media (min-width: 769px) {
+  .section .group {
+    flex-direction: row;
+  }
+
+  .section .group:last-of-type {
+    flex-direction: row-reverse;
+  }
 }
