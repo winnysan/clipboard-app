@@ -10,10 +10,6 @@
   box-sizing: border-box;
 }
 
-window {
-  overflow-y: scroll;
-}
-
 body,
 html {
   height: 100%;
@@ -47,6 +43,10 @@ html {
   html {
     font-size: 1.8rem;
   }
+}
+
+html {
+  scroll-snap-type: y mandatory;
 }
 
 /* CONTAINER CHECK */
@@ -166,6 +166,7 @@ a {
   background: url('background.jpg') center center / cover no-repeat;
   position: relative;
   overflow: hidden;
+  scroll-snap-align: start;
 }
 
 .hero-content {
@@ -261,6 +262,7 @@ a {
   justify-content: center;
   align-items: center;
   color: var(--dark);
+  scroll-snap-align: start;
 }
 
 .section.white {
