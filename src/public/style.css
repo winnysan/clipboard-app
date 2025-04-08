@@ -49,9 +49,10 @@ a {
   text-decoration: none;
 }
 
-/* CONTAINER CHECK */
+/* CONTAINER WIDTH CHECK */
 
 .container-check {
+  display: none;
   position: fixed;
   padding: 0.5rem;
   background-color: var(--white);
@@ -60,6 +61,10 @@ a {
   top: 1rem;
   left: 1rem;
   z-index: 1000;
+}
+
+html[data-env='dev'] .container-check {
+  display: block;
 }
 
 .container-check span {
