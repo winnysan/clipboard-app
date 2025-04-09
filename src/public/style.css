@@ -318,6 +318,7 @@ html[data-env='dev'] .container-check {
   border-radius: 1rem;
   margin: 0 2rem;
   flex-shrink: 0;
+  cursor: pointer;
 }
 
 @media (max-width: 768px) {
@@ -343,4 +344,50 @@ html[data-env='dev'] .container-check {
   .section .group:last-of-type {
     flex-direction: row-reverse;
   }
+}
+
+/* IMAGE OVERLAY */
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.overlay .wrapper {
+  text-align: center;
+  color: var(--white);
+  font-size: 1rem;
+  margin-top: 1rem;
+}
+
+.overlay .img {
+  max-width: 90%;
+  max-height: 90%;
+  box-shadow: 0 0 1.5rem rgba(0, 0, 0, 0.5);
+  border-radius: 0.5rem;
+}
+
+.overlay .caption {
+  display: block;
+  margin-top: 0.5rem;
+}
+
+.overlay .close {
+  position: absolute;
+  top: 1rem;
+  right: 2rem;
+  padding: 1rem;
+  font-size: 2rem;
+  color: var(--white);
+  background: transparent;
+  border: none;
+  cursor: pointer;
 }
