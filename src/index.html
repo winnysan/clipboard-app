@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" data-env="dev">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,6 +8,7 @@
   <link rel="stylesheet" href="public/style.css" />
   <script src="public/script.js" defer></script>
 </head>
+
 <body>
   <section class="hero">
     <div class="hero-content">
@@ -20,17 +22,48 @@
           </a>
         </div>
       </div>
-        <img src="public/app.png" alt="App Preview" class="app-image" />
-      </div>
+      <img src="public/app.png" alt="App Preview" class="app-image" />
+    </div>
     </div>
   </section>
 
   <section class="section white">
     <div class="container">
-      <h2>Features</h2>
-      <p>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor...
-      </p>
+      <h2 class="title">Features</h2>
+      <div class="features">
+        <div class="feature-group space-y-8">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12H4C4 16.4183 7.58172 20 12 20C16.4183 20 20 16.4183 20 12C20 7.58172 16.4183 4 12 4C9.25022 4 6.82447 5.38734 5.38451 7.50024L8 7.5V9.5H2V3.5H4L3.99989 5.99918C5.82434 3.57075 8.72873 2 12 2ZM13 7L12.9998 11.585L16.2426 14.8284L14.8284 16.2426L10.9998 12.413L11 7H13Z">
+            </path>
+          </svg>
+          <h3>Clipboard history</h3>
+        </div>
+        <div class="feature-group space-y-8">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M2.9918 21C2.44405 21 2 20.5551 2 20.0066V3.9934C2 3.44476 2.45531 3 2.9918 3H21.0082C21.556 3 22 3.44495 22 3.9934V20.0066C22 20.5552 21.5447 21 21.0082 21H2.9918ZM20 15V5H4V19L14 9L20 15ZM20 17.8284L14 11.8284L6.82843 19H20V17.8284ZM8 11C6.89543 11 6 10.1046 6 9C6 7.89543 6.89543 7 8 7C9.10457 7 10 7.89543 10 9C10 10.1046 9.10457 11 8 11Z">
+            </path>
+          </svg>
+          <h3>Images support</h3>
+        </div>
+        <div class="feature-group space-y-8">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M13.8273 1.69L22.3126 10.1753L20.8984 11.5895L20.1913 10.8824L15.9486 15.125L15.2415 18.6606L13.8273 20.0748L9.58466 15.8321L4.63492 20.7819L3.2207 19.3677L8.17045 14.4179L3.92781 10.1753L5.34202 8.76107L8.87756 8.05396L13.1202 3.81132L12.4131 3.10422L13.8273 1.69ZM14.5344 5.22554L9.86358 9.89637L7.0417 10.4607L13.5418 16.9609L14.1062 14.139L18.7771 9.46818L14.5344 5.22554Z">
+            </path>
+          </svg>
+          <h3>Pinning items</h3>
+        </div>
+        <div class="feature-group space-y-8">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M3 17H21V19H3V17ZM3 11H6V14H3V11ZM8 11H11V14H8V11ZM3 5H6V8H3V5ZM13 5H16V8H13V5ZM18 5H21V8H18V5ZM13 11H16V14H13V11ZM18 11H21V14H18V11ZM8 5H11V8H8V5Z">
+            </path>
+          </svg>
+          <h3>Keyboard shortcuts</h3>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -46,7 +79,7 @@
           </div>
           <img src="public/screen_pinning.png" alt="Pinning feature" data-image>
         </div>
-        
+
         <div class="group">
           <div class="info">
             <h3>Image support</h3>
@@ -86,7 +119,8 @@
     <div class="container">
       <h2>About author</h2>
       <p>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor...
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit
+        amet, adipiscing nec, ultricies sed, dolor...
       </p>
     </div>
   </section>
@@ -100,4 +134,5 @@
     <span class="max-width-640">max-width: 640px; font: 1x</span>
   </div>
 </body>
+
 </html>
