@@ -53,18 +53,24 @@ a {
   color: inherit;
 }
 
+h2,
+h3 {
+  text-align: center;
+  white-space: nowrap;
+}
+
 /* CONTAINER WIDTH CHECK */
 
 .container-check {
   display: none;
   position: fixed;
+  z-index: 1000;
   padding: 0.5rem;
-  background-color: var(--white);
-  color: var(--dark);
   border: 1px solid var(--dark);
+  color: var(--dark);
+  background-color: var(--white);
   top: 1rem;
   left: 1rem;
-  z-index: 1000;
 }
 
 html[data-env='dev'] .container-check {
@@ -76,6 +82,7 @@ html[data-env='dev'] .container-check {
 }
 
 /* max-width: 640px */
+
 @media (max-width: 640px) {
   span.max-width-640 {
     display: inline;
@@ -83,6 +90,7 @@ html[data-env='dev'] .container-check {
 }
 
 /* max-width: 768px */
+
 @media (min-width: 641px) and (max-width: 768px) {
   span.max-width-768 {
     display: inline;
@@ -90,6 +98,7 @@ html[data-env='dev'] .container-check {
 }
 
 /* max-width: 1024px */
+
 @media (min-width: 769px) and (max-width: 1024px) {
   span.max-width-1024 {
     display: inline;
@@ -97,6 +106,7 @@ html[data-env='dev'] .container-check {
 }
 
 /* max-width: 1280px */
+
 @media (min-width: 1025px) and (max-width: 1280px) {
   span.max-width-1280 {
     display: inline;
@@ -104,6 +114,7 @@ html[data-env='dev'] .container-check {
 }
 
 /* max-width: 1536px */
+
 @media (min-width: 1281px) and (max-width: 1536px) {
   span.max-width-1536 {
     display: inline;
@@ -111,6 +122,7 @@ html[data-env='dev'] .container-check {
 }
 
 /* min-width: 1537px */
+
 @media (min-width: 1537px) {
   span.min-width-1537 {
     display: inline;
@@ -157,43 +169,47 @@ html[data-env='dev'] .container-check {
 
 /* UTILITY */
 
-.space-x-4 > * + * {
+.space-x-1 > * + * {
   margin-left: 1rem;
 }
 
-.space-y-8 > * + * {
+.space-y-1 > * + * {
+  margin-top: 1rem;
+}
+
+.space-y-2 > * + * {
   margin-top: 2rem;
 }
 
 /* HERO */
 
 .hero {
-  height: 100vh;
-  width: 100%;
-  background: url('background.jpg') center center / cover no-repeat;
   position: relative;
   overflow: hidden;
+  width: 100%;
+  height: 100vh;
+  background: url('background.jpg') center center / cover no-repeat;
   scroll-snap-align: start;
 }
 
 .hero-content {
-  height: 100%;
   display: flex;
+  position: relative;
+  height: 100%;
   justify-content: flex-end;
   align-items: center;
-  position: relative;
 }
 
 .hero-body {
+  display: flex;
   position: absolute;
+  z-index: 2;
+  width: 90%;
+  justify-content: center;
+  align-items: start;
   top: 10%;
   bottom: 10%;
   left: 5%;
-  width: 90%;
-  display: flex;
-  align-items: start;
-  justify-content: center;
-  z-index: 2;
 }
 
 @media (min-width: 1025px) {
@@ -205,10 +221,10 @@ html[data-env='dev'] .container-check {
 }
 
 .hero-body h1 {
-  margin-left: -0.5rem;
   font-size: 5rem;
   font-weight: bold;
   color: var(--white);
+  margin-left: -0.5rem;
   letter-spacing: -0.2rem;
   text-shadow: 0px 0px 2px var(--dark);
 }
@@ -216,17 +232,17 @@ html[data-env='dev'] .container-check {
 .hero-body p {
   font-size: 2rem;
   font-weight: bold;
-  letter-spacing: -0.05rem;
   color: var(--white);
+  letter-spacing: -0.05rem;
   text-shadow: 0px 0px 2px var(--dark);
 }
 
 .hero-body a {
   display: flex;
-  align-items: center;
   width: fit-content;
-  background-color: var(--white);
   padding: 1rem 2rem;
+  background-color: var(--white);
+  align-items: center;
   border-radius: 1rem;
   transition: background-color 0.3s ease-in-out;
   box-shadow: 0px 0px 1px var(--dark);
@@ -237,10 +253,10 @@ html[data-env='dev'] .container-check {
 }
 
 .hero-body a .title {
-  color: var(--dark);
   font-size: 1rem;
-  text-transform: uppercase;
   font-weight: bold;
+  text-transform: uppercase;
+  color: var(--dark);
   letter-spacing: 0.1rem;
 }
 
@@ -250,9 +266,9 @@ html[data-env='dev'] .container-check {
 
 .app-image {
   position: sticky;
+  height: 60%;
   top: 50vh;
   max-width: 100%;
-  height: 60%;
   max-height: 90vh;
 }
 
@@ -264,15 +280,15 @@ html[data-env='dev'] .container-check {
   }
 }
 
-/* SECTIONS */
+/* SECTION */
 
 .section {
-  min-height: 100vh;
   display: flex;
+  padding: 4rem 0;
+  color: var(--dark);
   justify-content: center;
   align-items: center;
-  color: var(--dark);
-  padding: 4rem 0;
+  min-height: 100vh;
 }
 
 .section.white {
@@ -284,10 +300,10 @@ html[data-env='dev'] .container-check {
 }
 
 .section .title {
-  text-align: center;
-  margin-bottom: 4rem;
   font-size: 2rem;
+  text-align: center;
   text-transform: uppercase;
+  margin-bottom: 4rem;
 }
 
 .section .group-wrapper {
@@ -308,22 +324,29 @@ html[data-env='dev'] .container-check {
   align-items: center;
 }
 
-.section .group .info {
-  flex: 1;
-  min-width: 250px;
+.section .info {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
+  flex: 1;
+  min-width: 250px;
+}
+
+.section .info p {
+  text-align: center;
+}
+
+.section .info .nowrap {
+  white-space: nowrap;
 }
 
 .section .group img {
   width: auto;
+  margin: 0 2rem;
+  flex-shrink: 0;
   max-height: 30vh;
   object-fit: cover;
   border-radius: 1rem;
-  margin: 0 2rem;
-  flex-shrink: 0;
   cursor: pointer;
 }
 
@@ -355,22 +378,22 @@ html[data-env='dev'] .container-check {
 /* IMAGE OVERLAY */
 
 .overlay {
+  display: flex;
   position: fixed;
-  top: 0;
-  left: 0;
+  z-index: 9999;
   width: 100vw;
   height: 100vh;
   background-color: var(--transparent-dark);
-  display: flex;
-  align-items: center;
   justify-content: center;
-  z-index: 9999;
+  align-items: center;
+  top: 0;
+  left: 0;
 }
 
 .overlay .wrapper {
+  font-size: 1rem;
   text-align: center;
   color: var(--white);
-  font-size: 1rem;
   margin-top: 1rem;
 }
 
@@ -388,13 +411,13 @@ html[data-env='dev'] .container-check {
 
 .overlay .close {
   position: absolute;
-  top: 1rem;
-  right: 2rem;
   padding: 1rem;
+  border: none;
   font-size: 2rem;
   color: var(--white);
+  top: 1rem;
+  right: 2rem;
   background: transparent;
-  border: none;
   cursor: pointer;
 }
 
@@ -402,6 +425,7 @@ html[data-env='dev'] .container-check {
 
 .features {
   display: grid;
+  column-gap: 2rem;
   row-gap: 3rem;
 }
 
@@ -424,10 +448,12 @@ html[data-env='dev'] .container-check {
 }
 
 .features .feature-group svg {
-  color: rgb(10, 132, 255);
   width: 4rem;
   height: 4rem;
+  color: var(--blue);
 }
+
+/* ABOUT */
 
 .about {
   display: flex;
@@ -447,8 +473,8 @@ html[data-env='dev'] .container-check {
 .about .about-group {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
   align-items: center;
+  gap: 2rem;
 }
 
 .about p {
@@ -456,8 +482,8 @@ html[data-env='dev'] .container-check {
 }
 
 .about .qr {
-  height: auto;
   width: 50%;
+  height: auto;
   border: 1px solid var(--transparent-light);
   border-radius: 0.5rem;
 }
@@ -469,13 +495,13 @@ html[data-env='dev'] .container-check {
 }
 
 .copyright {
-  margin-top: 4rem;
   text-align: center;
+  margin-top: 4rem;
 }
 
 .copyright p {
-  font-size: 1.2rem;
   display: flex;
+  font-size: 1.2rem;
   flex-wrap: wrap;
   justify-content: center;
   gap: 0.5rem;
